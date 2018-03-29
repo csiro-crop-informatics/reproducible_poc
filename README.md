@@ -23,5 +23,3 @@ As a starting point, the following tools will be used:
 - [Bookdown](https://bookdown.org/yihui/bookdown/) - an R package that enables writing technical documents in markdown
 
 - [Singularity](https://github.com/singularityware/singularity) - a container system for reproducible/portable compute environments
->>>>>>> readme
-
