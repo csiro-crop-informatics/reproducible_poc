@@ -23,5 +23,5 @@ As a starting point, the following tools will be used:
 - [Bookdown](https://bookdown.org/yihui/bookdown/) - an R package that enables writing technical documents in markdown
 
 - [Singularity](https://github.com/singularityware/singularity) - a container system for reproducible/portable compute environments
->>>>>>> readme
 
+- [Snakemake](https://snakemake.readthedocs.io) or [Nextflow](https://www.nextflow.io/)  for top level managment of entire pipeline from input data to final document. Both facilitate HPC execution and Sigularity integration.
