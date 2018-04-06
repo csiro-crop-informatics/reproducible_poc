@@ -1,5 +1,5 @@
-Reproducible publication for data science
------------------------------------------
+A reproducible and reusable publication and analysis workflow
+-------------------------------------------------------------
 
 ## Introduction
 
@@ -7,7 +7,7 @@ Reproducibility of experiments is an essential part of the scientific method. Ma
   
 ## Methods 
 
-BioKanga is a suite of bioinformatics tools developed at CSIRO. To evaluate BioKanga's sequence alignment module against other state-of-the-art tools, we developed workflows using two popular automation frameworks, Snakemake and Nextflow. Individual tasks are executed in Cloud or HPC environment using dedicated, lightweight (Docker/Singularity) containers for each tool being evaluated. Containers are also used for other tasks including extensive quality-control of the input as well as the interim data and final results. Use of containers provides a reproducible software environment which contributes to the replicability of the results. Given a pre-defined experimental set-up, raw data is acquired from a public source, processed and analysed. Final document including dynamically generated figures and tables is compiled from R Markdown or LaTeX/knitr. 
+BioKanga is a suite of bioinformatics tools developed at CSIRO. To evaluate BioKanga's sequence alignment module against other state-of-the-art tools, we developed workflows using two popular automation frameworks, Snakemake and Nextflow. Individual tasks are executed in Cloud or HPC environment using dedicated, lightweight (Docker/Singularity) containers for each tool being evaluated. Containers are also used for other tasks including extensive quality-control of the input as well as the interim data and final results. Use of containers provides a reproducible software environment which contributes to the replicability of the results. Given a pre-defined experimental set-up, raw data is acquired from a public source, processed and analysed. The final document (research paper or project report) including dynamically generated figures and tables is compiled from R Markdown or LaTeX/knitr. 
 
 ## Conclusion
 
