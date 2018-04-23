@@ -31,7 +31,7 @@ process kangaAlign {
     --pemode 2 \
     --substitutions 3 
     
-    samtools index ${out}
+
     """
 }
 
