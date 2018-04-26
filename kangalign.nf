@@ -12,6 +12,7 @@ out = file(params.out)
  
 
 process kangaAlign {
+   
     input:
     file r1
     file r2
