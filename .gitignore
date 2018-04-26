@@ -1,1 +1,4 @@
 data/
+partial/
+work/
+.nextflow*
