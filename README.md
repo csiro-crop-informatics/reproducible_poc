@@ -24,4 +24,4 @@ As a starting point, the following tools will be used:
 
 - [Singularity](https://github.com/singularityware/singularity) - a container system for reproducible/portable compute environments
 
-- [Snakemake](https://snakemake.readthedocs.io) or [Nextflow](https://www.nextflow.io/)  for top level managment of entire pipeline from input data to final document. Both facilitate HPC execution and Sigularity integration.
+- [Snakemake](https://snakemake.readthedocs.io) or [Nextflow](https://www.nextflow.io/)  for top level managment of entire pipeline from input data to final document. Both facilitate HPC execution and Sigularity integration. See [`NEXTFLOW.md`](NEXTFLOW.md) for details on how to run a simple pipeline using different compute environments. 
