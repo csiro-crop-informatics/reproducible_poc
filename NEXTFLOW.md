@@ -3,7 +3,7 @@ Job execusion using [![Nextflow](https://www.nextflow.io/img/nextflow2014_no-bg.
 
 We use [nextflow](https://www.nextflow.io/) to handle compute. One way to make nextflow available on your system: 
 
-`curl -s https://get.nextflow.io | bash && mkdir ~/bin && mv nextflow ~/bin && PATH+=":~/bin"`
+`curl -s https://get.nextflow.io | bash && mkdir -p ~/bin && mv nextflow ~/bin && PATH+=":~/bin"`
 
 Current set-up allows for a test script to be executed 
 
