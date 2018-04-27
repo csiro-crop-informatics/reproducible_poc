@@ -63,6 +63,6 @@ nextflow pipeline.nf -profile slurm,singularity,singularitymodule
 
 ### Execution summary report
 
-After execution of the pipeline a summary report such as [this one](docs/report_example.html)  is crated in the working directory
+After execution of the pipeline a summary [report](report.html) is crated in the working directory.
 
 
