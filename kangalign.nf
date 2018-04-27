@@ -1,14 +1,35 @@
-params.r1 = "$PWD/data/simreads/Oryza_sativa.IRGSP-1.0.dna_ERR_1.5_NREADS_1000000.R1.fa"
-params.r2 = "$PWD/data/simreads/Oryza_sativa.IRGSP-1.0.dna_ERR_1.5_NREADS_1000000.R2.fa"
-params.ref = "$PWD/data/reference/Oryza_sativa.IRGSP-1.0.dna.fa"
+//params.r1 = "$PWD/data/simreads/Oryza_sativa.IRGSP-1.0.dna_ERR_1.5_NREADS_1000000.R1.fa"
+//params.r2 = "$PWD/data/simreads/Oryza_sativa.IRGSP-1.0.dna_ERR_1.5_NREADS_1000000.R2.fa"
+//params.ref = "$PWD/data/reference/Oryza_sativa.IRGSP-1.0.dna.fa"
+
+params.r1 = "$PWD/data/simreads/Arabidopsis_thaliana.TAIR10.dna_ERR_1.5_NREADS_100000.R1.fa"
+params.r2 = "$PWD/data/simreads/Arabidopsis_thaliana.TAIR10.dna_ERR_1.5_NREADS_100000.R2.fa"
+//params.ref = "$PWD/data/reference/Arabidopsis_thaliana.TAIR10.dna.fa"
+params.url = "ftp://ftp.ensemblgenomes.org/pub/plants/release-38/fasta/arabidopsis_thaliana/dna/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa.gz"
 
 r1 = file(params.r1)
 r2 = file(params.r2)
-ref = file(params.ref)
+//ref = file(params.ref)
+url = params.url
+
+
+process fetchRef {
+  input:
+    val url
+    
+  output:
+    file ref into refs
+
+    """
+    curl ${url} | gunzip --stdout > ref
+    """
+}
+
+//process kangaSimReads {}
 
 process kangaIndex {
   input:
-  file ref
+  file ref from refs
 
   output:
   file db
