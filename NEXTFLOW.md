@@ -5,11 +5,14 @@ We use [nextflow](https://www.nextflow.io/) to handle compute. One way to make n
 
 `curl -s https://get.nextflow.io | bash && mkdir -p ~/bin && mv nextflow ~/bin && PATH+=":~/bin"`
 
-Current set-up executes a simple test pipeline composed of three processes, including 
+Current set-up executes a simple test pipeline composed of the following processes
 
+* `curl` 
+ * assembly download
 * [biokanga](https://github.com/csiro-crop-informatics/biokanga) 
  * reference indexing 
- * read alignment 
+ * short read simulation
+ * short read alignment 
 * [samtools](http://www.htslib.org/) 
  * (re-)indexing of the output BAM file 
 
@@ -18,28 +21,30 @@ The pipeline logic is largely separated from the execution environment configura
 Currentl to keep the set-up modular, we opt for container per tool, but if required for efficiency these could potentially be packaged in a single container.
 Below, we list several alternative ways of executing the same pipeline. 
 
-### Alternative ways of running the pipeline include:
+### Alternative ways of running the pipeline
+
+Note, for any of the below using `-resume` prevents processes from being re-run if nighter input no scripts have changed.
 
 Local/interactive with required software assumed to be available:
 
-``` nextflow kangalign.nf```
+``` nextflow pipeline.nf```
 
 Local/interactive with required software loaded via `module` directives:
 
-```nextflow kangalign.nf -profile modules```
+```nextflow pipeline.nf -profile modules```
 
 In container(s) using docker:
 
-```nextflow kangalign.nf -profile docker```
+```nextflow pipeline.nf -profile docker```
 
 
 In container(s) using singularity:
 
-```nextflow kangalign.nf -profile singularity```
+```nextflow pipeline.nf -profile singularity```
 
 On a SLURM cluster with modules:
 
-```nextflow kangalign.nf -profile slurm,modules```
+```nextflow pipeline.nf -profile slurm,modules```
 
 * `slurm` profile sets some SLRUM defaults and ensures processes are submitted using `sbatch`
 * `modules` profile facilitates loading of required software modules
@@ -49,11 +54,15 @@ In container(s) using singularity on a SLURM cluster, first ensuring singularity
 
 ```
 module load singularity
-nextflow kangalign.nf -profile slurm,singularity,singularitymodule
+nextflow pipeline.nf -profile slurm,singularity,singularitymodule
 ```
 
 * `slurm` profile sets some SLRUM defaults and ensures processes are submitted using `sbatch`
 * `singularity` profile facilitates pulling and converting appropriate docker images 
 * `singularitymodule` profile ensures singularity module is loaded on each execution node
+
+### Execution summary report
+
+After execution of the pipeline a summary report such as [this one](docs/report_example.html)  is crated in the working directory
 
 
