@@ -7,10 +7,10 @@ We use [nextflow](https://www.nextflow.io/) to handle compute. One way to make n
 
 Current set-up executes a test pipeline composed of three processes. Alternative ways of running the pipeline include:
 
-* locally `nextflow kangalign.nf` - the required software, i.e. [biokanga](https://github.com/csiro-crop-informatics/biokanga) is assumed to be available 
-* on a SLURM cluster `nextflow kangalign.nf -profile slurm`
-* in container(s) using docker (run as root?) `nextflow kangalign.nf -profile docker`
+* starndard `nextflow kangalign.nf` - the required software, i.e. [biokanga](https://github.com/csiro-crop-informatics/biokanga) is assumed to be available 
+* in container(s) using docker `nextflow kangalign.nf -profile docker`
 * in container(s) using singularity `nextflow kangalign.nf -profile singularity`
+* on a SLURM cluster `nextflow kangalign.nf -profile slurm`
 * in container(s) using singularity on a SLURM cluster `module load singularity && kangalign.nf -profile slurm,singularity`
 
 
