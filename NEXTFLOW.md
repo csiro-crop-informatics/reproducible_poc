@@ -8,13 +8,13 @@ We use [nextflow](https://www.nextflow.io/) to handle compute. One way to make n
 Current set-up executes a simple test pipeline composed of the following processes
 
 * `curl` 
- * assembly download
+  * assembly download
 * [biokanga](https://github.com/csiro-crop-informatics/biokanga) 
- * reference indexing 
- * short read simulation
- * short read alignment 
+  * reference indexing 
+  * short read simulation
+  * short read alignment 
 * [samtools](http://www.htslib.org/) 
- * (re-)indexing of the output BAM file 
+  * (re-)indexing of the output BAM file 
 
 
 The pipeline logic is largely separated from the execution environment configuration. 

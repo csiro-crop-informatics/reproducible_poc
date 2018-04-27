@@ -22,7 +22,7 @@ process fetchRef {
 
 process kangaSimReads {
   input:
-    file ref from refs 
+    file ref from refs
   
   output:
     file r1 into simreads1
@@ -35,16 +35,16 @@ process kangaSimReads {
   --in ${ref} \
   --nreads ${nreads} \
   --out r1 \
-  --outpe r2 
+  --outpe r2
   """
 }
 
 process kangaIndex {
   input:
-  file ref from refs
+    file ref from refs
 
   output:
-  file db
+    file db
 
     """
     biokanga index \
@@ -55,12 +55,12 @@ process kangaIndex {
 }
 
 process kangaAlign {
-    input:
+  input:
     file r1 from simreads1
     file r2 from simreads2
     file db
 
-    output:
+  output:
     file 'out.bam' into bams
 
     """
@@ -76,7 +76,7 @@ process kangaAlign {
 
 
 process bamReIndex {
-    input:
+  input:
     file bam from bams
     
     """
