@@ -18,7 +18,7 @@ Current set-up executes a simple test pipeline composed of the following process
 
 
 The pipeline logic is largely separated from the execution environment configuration. 
-Currentl to keep the set-up modular, we opt for container per tool, but if required for efficiency these could potentially be packaged in a single container.
+Currently to keep the set-up modular, we opt for container per tool, but if required for efficiency these could potentially be packaged in a single container.
 Below, we list several alternative ways of executing the same pipeline. 
 
 ### Alternative ways of running the pipeline
@@ -37,6 +37,9 @@ In container(s) using docker:
 
 ```nextflow pipeline.nf -profile docker```
 
+Note that this option may cause permissions-based errors, things are 
+much more straightforward with singularity - see below.
+
 
 In container(s) using singularity:
 
@@ -49,7 +52,7 @@ On a SLURM cluster with modules:
 * `slurm` profile sets some SLRUM defaults and ensures processes are submitted using `sbatch`
 * `modules` profile facilitates loading of required software modules
 
-In container(s) using singularity on a SLURM cluster, first ensuring singularity is avaiable on head/login node
+In container(s) using singularity on a SLURM cluster, first ensuring singularity is available on head/login node
 
 
 ```
