@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-IN='data/reference/Oryza_sativa.IRGSP-1.0.dna.fa'
+#IN='data/reference/Oryza_sativa.IRGSP-1.0.dna.fa'
+IN='data/reference/Arabidopsis_thaliana.TAIR10.dna.fa'
 SEQERRS=1.5
 OUTDIR='data/simreads'
-NREADS=1000000
+NREADS=100000
 
 
 mkdir -p ${OUTDIR}
