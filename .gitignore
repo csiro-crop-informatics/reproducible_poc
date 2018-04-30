@@ -2,3 +2,4 @@ data/
 partial/
 work/
 .nextflow*
+singularity-images/
