@@ -39,8 +39,8 @@ process kangaSimReads {
     file ref from refs
   
   output:
-    file r1 into simreadsR1
-    file r2 into simreadsR2
+    file r1 into R1
+    file r2 into R2
   
   """
   biokanga simreads \
@@ -68,23 +68,27 @@ process kangaIndex {
     """
 }
 
-//process hisat2Index {
-//  input:
-//    file ref from refs
-//  
-//  output:
-//    file 
-//}
+process hisat2Index {
+  input:
+    file ref from refs
+  
+  output:
+    file hisat2db 
+    
+    """
+    hisat2 -h > hisat2db
+    """
+}
 
 process hisat2Align {
   input:
-    file r1 from simreadsR1
-    file r2 from simreadsR2
-
+    file r1 from R1
+    file r2 from R2
+    file hisat2db
 
 
     """
-    hisat2 -h
+    hisat2 -h 
     """
     
 //    hisat2 -x $index_base \\
@@ -104,8 +108,8 @@ process hisat2Align {
 
 process kangaAlign {
   input:
-    file r1 from simreadsR1
-    file r2 from simreadsR2
+    file r1 from R1
+    file r2 from R2
     file kangadb
 
   output:
