@@ -44,21 +44,55 @@ process kangaIndex {
     file ref from refs
 
   output:
-    file db
+    file kangadb
 
     """
     biokanga index \
     -i ${ref} \
-    -o db \
+    -o kangadb \
     --ref ${ref}
     """
+}
+
+//process hisat2Index {
+//  input:
+//    file ref from refs
+//  
+//  output:
+//    file 
+//}
+
+process hisat2Align {
+  input:
+    file r1 from simreadsR1
+    file r2 from simreadsR2
+
+
+
+    """
+    hisat2 -h
+    """
+    
+//    hisat2 -x $index_base \\
+//      -1 ${reads[0]} \\
+//      -2 ${reads[1]} \\
+//      $rnastrandness \\
+//      --known-splicesite-infile $alignment_splicesites \\
+//      --no-mixed \\
+//      --no-discordant \\
+//      -p ${task.cpus} \\
+//      --met-stderr \\
+//      --new-summary \\
+//      --summary-file ${prefix}.hisat2_summary.txt \\
+//      | samtools view -bS -F 4 -F 8 -F 256 - > ${prefix}.bam
+//    """
 }
 
 process kangaAlign {
   input:
     file r1 from simreadsR1
     file r2 from simreadsR2
-    file db
+    file kangadb
 
   output:
     file 'out.bam' into bams
@@ -67,7 +101,7 @@ process kangaAlign {
     biokanga align \
     -i ${r1} \
     -u ${r2} \
-    --sfx ${db} \
+    --sfx ${kangadb} \
     -o out.bam \
     --pemode 2 \
     --substitutions 3 
