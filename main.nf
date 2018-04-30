@@ -25,8 +25,8 @@ process kangaSimReads {
     file ref from refs
   
   output:
-    file r1 into simreads1
-    file r2 into simreads2
+    file r1 into simreadsR1
+    file r2 into simreadsR2
   
   """
   biokanga simreads \
@@ -56,8 +56,8 @@ process kangaIndex {
 
 process kangaAlign {
   input:
-    file r1 from simreads1
-    file r2 from simreads2
+    file r1 from simreadsR1
+    file r2 from simreadsR2
     file db
 
   output:
