@@ -1,12 +1,26 @@
-params.url = "ftp://ftp.ensemblgenomes.org/pub/plants/release-38/fasta/arabidopsis_thaliana/dna/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa.gz"
-url = params.url
-
 //READ SIMULATION PARAMS
-params.seqerrs = 1.5
-params.nreads = 100000
 seqerrs = params.seqerrs
 nreads = params.nreads
+url = params.url
 
+def helpMessage() {
+    log.info"""
+    ===========================================================
+    csiro-crop-informatics/reproducible_poc  ~  version ${params.version}
+    ===========================================================
+    Usage:
+    
+    nextflow run csiro-crop-informatics/reproducible_poc 
+    
+    """.stripIndent()
+}
+
+// Show help emssage
+params.help = false
+if (params.help){
+    helpMessage()
+    exit 0
+}
 
 process fetchRef {
   input:
