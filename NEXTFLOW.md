@@ -70,7 +70,7 @@ After execution of the pipeline a summary [report](report.html) is crated in the
 
 ### Pipeline flowchart
 
-A digraph representation of the pipeline can be produced by nextflow. This can be a [DOT](https://www.graphviz.org/doc/info/lang.html) file or a figure (pdf,png,svg) generated from DOT if Graphviz is available e.g. `-with-dag flowchart.svg` 
+A digraph representation of the pipeline can be produced by nextflow. This can be a [DOT](https://www.graphviz.org/doc/info/lang.html) file or a figure (pdf, png, svg) generated from DOT if Graphviz is available e.g. `-with-dag flowchart.svg` 
 
 ![flowchart](doc/flowchart.svg)
 
