@@ -53,49 +53,59 @@ process kangaSimReads {
   """
 }
 
-//process fasta2mockFASTQ {
-//  input:
-//    file r1 from R1
-//    file r2 from R2
-//    
-//  output:
-//    file q1 into FASTQ1
-//    file q2 into FASTQ2
-//    
-//    """
-//    sed 's/^>/@/' \$r1 | awk -vOFS="\n" '{print $1,$2,"+";gsub(".","a",$2);print $2}' > q1
-//    sed 's/^>/@/' \$r2 | awk -vOFS="\n" '{print $1,$2,"+";gsub(".","a",$2);print $2}' > q2
-//    """
+process fasta2mockFASTQ {
+  input:
+    file r1 from R1
+    file r2 from R2
+    
+  output:
+    file q1 into FASTQ1
+    file q2 into FASTQ2
+    
+    """
+    fasta2fastqDummy.sh ${r1} > q1
+    fasta2fastqDummy.sh ${r2} > q2
+    """
 
-//}
+}
 
-//process fastQC {
+process fastQC {
 
 ////  tag "$name"
 ////  publishDir "${params.outdir}/fastqc", mode: 'link',
 ////        saveAs: {filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename"}
 
-//  input:
-//    file r1 from FASTQ1 //R1
-//    file r2 from FASTQ2 //R2
+  input:
+    file r1 from FASTQ1 //R1
+    file r2 from FASTQ2 //R2
 
 
-//  output:
-//    file "*_fastqc.{zip,html}" into fastqc_results
+  output:
+    file "*_fastqc.{zip,html}" into fastqc_results
 
-//    """
-//    fastqc -q ${r1} ${r2}
-//    """
+    """
+    fastqc -q ${r1} ${r2}
+    """
 
 
-//}
+}
 
-//process multiQC {
-//  input: 
-//  
-//  output:
-//    file 
-//}
+process multiQC {    
+  publishDir "${params.outdir}/MultiQC", mode: 'link'
+
+  input: 
+    file f from fastqc_results
+  
+  output:
+    file "*multiqc_report.html" into multiqc_report
+    file "*_data"
+    
+    """
+    pwd
+    multiqc . -f
+    """
+
+}
 
 process hisat2Index {
   input:

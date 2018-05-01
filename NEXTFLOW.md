@@ -9,12 +9,16 @@ Current set-up executes a simple test pipeline composed of the following process
 
 * `curl` 
   * assembly download
-* [biokanga](https://github.com/csiro-crop-informatics/biokanga) 
+* [`biokanga`](https://github.com/csiro-crop-informatics/biokanga) 
   * reference indexing 
   * short read simulation
   * short read alignment 
-* [samtools](http://www.htslib.org/) 
-  * (re-)indexing of the output BAM file 
+* [`samtools`](http://www.htslib.org/) 
+  * (re-)indexing of the `biokanga` output BAM file 
+* [`hisat2`](https://ccb.jhu.edu/software/hisat2/)
+  * refrence indexing
+  * short read alignement
+* FastQC and MultiQC on (for now) simulaed reads
 
 
 The pipeline logic is largely separated from the execution environment configuration. 
@@ -70,8 +74,8 @@ After execution of the pipeline a summary [report](report.html) is crated in the
 
 ### Pipeline flowchart
 
-A digraph representation of the pipeline can be produced by nextflow. This can be a [DOT](https://www.graphviz.org/doc/info/lang.html) file or a figure (pdf, png, svg) generated from DOT if Graphviz is available e.g. `-with-dag flowchart.svg` 
+A digraph representation of the pipeline can be produced by nextflow. This can be HTML (`-with-dag flowchart.html`), a [DOT language](https://www.graphviz.org/doc/info/lang.html) file or a figure (pdf, png, svg) generated from DOT if Graphviz is available e.g. `-with-dag flowchart.svg` 
 
 ![flowchart](doc/flowchart.svg)
 
-Alternatively, to output HTML use `-with-dag flowchart.html`.
+
