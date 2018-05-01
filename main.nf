@@ -1,6 +1,7 @@
 //READ SIMULATION PARAMS
 seqerrs = params.seqerrs
-nreads = params.nreads
+//nreads = params.nreads
+nreadsarr = [1000,2000,4000,8000];
 url = params.url
 
 def helpMessage() {
@@ -35,56 +36,66 @@ process fetchRef {
 }
 
 process kangaSimReads {
+  tag {nreads}
   input:
     file ref from refs
-  
+    each nreads from nreadsarr
+    
   output:
-    file r1 into R1
-    file r2 into R2
-  
+    set val(nreads), file ("*r1") into kangaR1, hisat2R1, fa2fqR1
+    set val(nreads), file ("*r2") into kangaR2, hisat2R2, fa2fqR2
+//    file "*r1" into kangaR1, hisat2R1, fa2fqR1
+//    file "*r2" into kangaR2, hisat2R2, fa2fqR2
+//    val nreads into fnames
+
+
   """
   biokanga simreads \
   --pegen \
   --seqerrs ${seqerrs} \
   --in ${ref} \
   --nreads ${nreads} \
-  --out r1 \
-  --outpe r2
+  --out "${nreads}_r1" \
+  --outpe "${nreads}_r2"
   """
 }
 
 process fasta2mockFASTQ {
+  tag {nreads}
   input:
-    file r1 from R1
-    file r2 from R2
+    set val(nreads), file("*r1*") from fa2fqR1
+    set val(nreads), file("*r2*") from fa2fqR2
+//    val nreads from fnames
     
   output:
-    file q1 into FASTQ1
-    file q2 into FASTQ2
+    set val(nreads), file ("*q1") into FASTQ1
+    set val(nreads), file ("*q2") into FASTQ2
+//    val nreads into fqnames
     
     """
-    fasta2fastqDummy.sh ${r1} > q1
-    fasta2fastqDummy.sh ${r2} > q2
+    fasta2fastqDummy.sh *r1 > ${nreads}_r1_q1
+    fasta2fastqDummy.sh *r2 > ${nreads}_r2_q2
     """
 
 }
 
 process fastQC {
-
+  tag {nreads}
 ////  tag "$name"
 ////  publishDir "${params.outdir}/fastqc", mode: 'link',
 ////        saveAs: {filename -> filename.indexOf(".zip") > 0 ? "zips/$filename" : "$filename"}
 
   input:
-    file r1 from FASTQ1 //R1
-    file r2 from FASTQ2 //R2
-
+    set val(nreads), file(reads1) from FASTQ1 //R1
+    set val(nreads), file(reads2) from FASTQ2 //R1
+    //file "*r2" from FASTQ2 //R2
+//    val nreads from fqnames
 
   output:
     file "*_fastqc.{zip,html}" into fastqc_results
 
     """
-    fastqc -q ${r1} ${r2}
+    fastqc -q $reads1 $reads2 //*r1 *r2
     """
 
 
@@ -94,7 +105,7 @@ process multiQC {
   publishDir "${params.outdir}/MultiQC", mode: 'link'
 
   input: 
-    file f from fastqc_results
+    file f from fastqc_results.collect()
   
   output:
     file "*multiqc_report.html" into multiqc_report
@@ -104,7 +115,6 @@ process multiQC {
     pwd
     multiqc . -f
     """
-
 }
 
 process hisat2Index {
@@ -120,9 +130,10 @@ process hisat2Index {
 }
 
 process hisat2Align {
+  tag {nreads}
   input:
-    file r1 from R1
-    file r2 from R2
+    set val(nreads), file(r1) from hisat2R1
+    set val(nreads), file(r2) from hisat2R2
     file hisat2db from hisat2dbs
   output:
     stdout sam 
@@ -147,6 +158,7 @@ process hisat2Align {
 }
 
 process sam2bam {
+  publishDir "${params.outdir}/hisat2BAMs", mode: 'link'
   input: 
     stdin sam
 
@@ -174,9 +186,12 @@ process kangaIndex {
 }
 
 process kangaAlign {
+  tag {nreads}
+  publishDir "${params.outdir}/kangaBAMs", mode: 'link'
+  tag {nreads}
   input:
-    file r1 from R1
-    file r2 from R2
+    set val(nreads), file(r1) from kangaR1
+    set val(nreads), file(r2) from kangaR2
     file kangadb
 
   output:
@@ -195,6 +210,7 @@ process kangaAlign {
 
 
 process bamReIndex {
+  publishDir "${params.outdir}/kangaBAMs", mode: 'link'
   input:
     file bam from bams
     
