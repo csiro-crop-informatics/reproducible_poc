@@ -8,13 +8,13 @@ We use [nextflow](https://www.nextflow.io/) to handle compute. One way to make n
 Current set-up executes a simple test pipeline composed of the following processes
 
 * `curl` 
-  * assembly download
+  * download one or more genome assemblies
 * [`biokanga`](https://github.com/csiro-crop-informatics/biokanga) 
   * reference indexing 
   * short read simulation
   * short read alignment 
 * [`samtools`](http://www.htslib.org/) 
-  * (re-)indexing of the `biokanga` output BAM file 
+  * converting `hisat2` output SAM to BAM
 * [`hisat2`](https://ccb.jhu.edu/software/hisat2/)
   * refrence indexing
   * short read alignement
@@ -22,9 +22,9 @@ Current set-up executes a simple test pipeline composed of the following process
 
 
 The pipeline logic is largely separated from the execution environment configuration. 
-Currently to keep the set-up modular, we opt for container per tool, but if required for efficiency these could potentially be packaged in a single container as far as practical subject to dependency incmpatibility.
+Currently to keep the set-up modular, we opt for container per tool, but if required for efficiency these could be packaged in a single container as far as practical, subject to dependency/environment compatibility.
 
-Below, we list several alternative ways of executing the same pipeline. This assumes you have cloned this repository and runthe pipeline in its main directory. Alternatively, replace `nextflow main.nf` with `nextflow run csiro-crop-informatics/reproducible_poc -r develop` to let nextflow handle pulling the repository prior to execution. 
+Below, we list several alternative ways of executing the same pipeline. This assumes you have cloned this repository and run the pipeline in its main directory. Alternatively, replace `nextflow main.nf` with `nextflow run csiro-crop-informatics/reproducible_poc -r develop` to let nextflow handle pulling the repository prior to execution. 
 
 ### Alternative ways of running the pipeline
 
