@@ -18,7 +18,7 @@ Current set-up executes a simple test pipeline composed of the following process
 * [`hisat2`](https://ccb.jhu.edu/software/hisat2/)
   * refrence indexing
   * short read alignement
-* FastQC and MultiQC on (for now) simulaed reads
+* FastQC and MultiQC on (for now) simulated reads
 
 
 The pipeline logic is largely separated from the execution environment configuration. 
