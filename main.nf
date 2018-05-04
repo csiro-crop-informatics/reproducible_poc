@@ -79,7 +79,6 @@ process fasta2mockFASTQ {
     fasta2fastqDummy.sh r1 > "${nametag}_r1.q1"
     fasta2fastqDummy.sh r2 > "${nametag}_r2.q2"
     """
-
 }
 
 process fastQC {
