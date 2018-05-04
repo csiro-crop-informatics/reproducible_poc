@@ -184,14 +184,14 @@ process kangaAlign {
     set val(dbname),file(kangadb) from kangadbs
 
   output:
-    set val(nametag), file("${nametag}_${dbname}.bam") into kangaBAMs
+    set val(nametag), file("${nametag}_vs_${dbname}.bam") into kangaBAMs
 
     """
     biokanga align \
     -i ${r1} \
     -u ${r2} \
     --sfx ${kangadb} \
-    -o "${nametag}_${dbname}.bam" \
+    -o "${nametag}_vs_${dbname}.bam" \
     --pemode 2 \
     --substitutions 3 
     """
