@@ -8,7 +8,7 @@ We use [nextflow](https://www.nextflow.io/) to handle compute. One way to make n
 Current set-up executes a simple test pipeline composed of the following processes
 
 * `curl` 
-  * download one or more genome assemblies
+  * download a genome assembly
 * [`biokanga`](https://github.com/csiro-crop-informatics/biokanga) 
   * reference indexing 
   * short read simulation
@@ -18,7 +18,7 @@ Current set-up executes a simple test pipeline composed of the following process
 * [`hisat2`](https://ccb.jhu.edu/software/hisat2/)
   * refrence indexing
   * short read alignement
-* FastQC and MultiQC on (for now) simulated reads
+* FastQC and MultiQC on (for now) simulated reads converted from FASTA to mock FASTQ
 
 
 The pipeline logic is largely separated from the execution environment configuration. 
@@ -56,6 +56,7 @@ much more straightforward with singularity - see below.
 
 * `slurm` profile sets some SLRUM defaults and ensures processes are submitted using `sbatch`
 * `modules` profile facilitates loading of required software modules
+  * You may have to update the required modules names/versions in [`conf/modules.config`](conf/modules.config) to match those available on your system
 
 #### In container(s) using singularity on a SLURM cluster, first ensuring singularity is available on head/login node
 
