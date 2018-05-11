@@ -3,3 +3,4 @@ partial/
 work/
 .nextflow*
 singularity-images/
+conf/cloud.config
