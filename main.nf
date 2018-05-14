@@ -41,7 +41,7 @@ process fetchRef {
 
     """
     #head -1000 ${baseDir}/data/ref1k > ref
-    curl ${url} | gunzip --stdout | head -10000 > ref
+    curl ${url} | gunzip --stdout > ref
     """
 }
 
