@@ -97,21 +97,21 @@ process fastQC {
 
 }
 
-process multiQC {    
-  publishDir "${params.outdir}/MultiQC", mode: 'link'
+//process multiQC {    
+//  publishDir "${params.outdir}/MultiQC", mode: 'link'
 
-  input: 
-    file f from fastqc_results.collect()
-  
-  output:
-    file "*multiqc_report.html" into multiqc_report
-    file "*_data"
-    
-    """
-    pwd
-    multiqc . -f
-    """
-}
+//  input: 
+//    file f from fastqc_results.collect()
+//  
+//  output:
+//    file "*multiqc_report.html" into multiqc_report
+//    file "*_data"
+//    
+//    """
+//    pwd
+//    multiqc . -f
+//    """
+//}
 
 process hisat2Index {  
   tag{name}
