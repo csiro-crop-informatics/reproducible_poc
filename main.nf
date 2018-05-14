@@ -97,21 +97,21 @@ process fastQC {
 
 }
 
-//process multiQC {    
-//  publishDir "${params.outdir}/MultiQC", mode: 'link'
+process multiQC {    
+  publishDir "${params.outdir}/MultiQC", mode: 'copy'
 
-//  input: 
-//    file f from fastqc_results.collect()
-//  
-//  output:
-//    file "*multiqc_report.html" into multiqc_report
-//    file "*_data"
-//    
-//    """
-//    pwd
-//    multiqc . -f
-//    """
-//}
+  input: 
+    file f from fastqc_results.collect()
+  
+  output:
+    file "*multiqc_report.html" into multiqc_report
+    file "*_data"
+    
+    """
+    pwd
+    multiqc . -f
+    """
+}
 
 process hisat2Index {  
   tag{name}
@@ -145,7 +145,7 @@ process hisat2Align {
 }
 
 process sam2bam {
-  publishDir "${params.outdir}/BAMs/hisat2", mode: 'link'  
+  publishDir "${params.outdir}/BAMs/hisat2", mode: 'copy'  
   tag {nametag}
   input: 
     stdin sam
@@ -176,7 +176,7 @@ process kangaIndex {
 }
 
 process kangaAlign {
-  publishDir "${params.outdir}/BAMs/biokanga", mode: 'link'
+  publishDir "${params.outdir}/BAMs/biokanga", mode: 'copy'
   tag {nametag+" vs "+dbname}
   input:
     set val(nametag),file(r1),file(r2) from kangaReads
