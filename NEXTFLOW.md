@@ -69,6 +69,66 @@ nextflow main.nf -profile slurm,singularity,singularitymodule
 * `singularity` profile facilitates pulling and converting appropriate docker images 
 * `singularitymodule` profile ensures singularity module is loaded on each execution node
 
+
+#### On AWS EC2 cloud 
+
+##### Prerequisites
+
+* Create AWS account and log into your AWS account console
+* Go to *EC2 Dashboard -> NETWORK & SECURITY -> Security Groups* and add/update rule in the default AWS Security Group to allow incoming TCP traffic on all ports (port 22 required for ssh, a range of ports required for intra-cluster communication)
+* Go to *EC2 Dashboard -> NETWORK & SECURITY -> Key Pairs * and upload a public ssh key. Ideally, use a key different to your default one in which case you also need to set its location under `cloud` in `nextflow.config`, e.g. `cloud.keyFile = '~/.ssh/id_rsa2.pub'`
+* Setup AWS programmatic access configuration on your local machine. Nextflow must be able to pick-up your credentials to connect to AWS and spawn a virtual cluster. One way to set things up:
+  * As root/sudo `apt install awscli`
+  * Run `aws config`
+  * Set AWS access ID to the one generated in your AWS account console 
+  * Set AWS access key to the one generated in your AWS account console 
+  * Set default region to `eu-west-1` (Ireland) where a pre-configured nextflow AMI (`ami-4b7daa32`) is available. We use `ap-southeast-2` (Sydney) instead, but this required cloning the AMI to make it available in this region. The cloned AMI is `ami-054c4e0bad8549c37`.
+* Create EFS volume, record details for `cloud` settings in [`nextflow.config`](nextflow.config). The settings need to be specific to your account, but should follow this pattern
+
+```
+cloud {
+    imageId = 'ami-4b7daa32'              // AMI available in eu-west-1
+    subnetId = 'subnet-80f749c8'          // Specific to where you set-up your EFS
+    sharedStorageId = 'fs-ec6cf125'       // Your EFS ID
+    keyFile = '/path/to/.ssh/id_rsa.pub'  //If using non-default key pair
+    instanceType = 't2.medium'
+    userName = 'your_aws_username'
+    //Optional:
+    autoscale {
+      enabled = true
+      minInstances = 1
+      maxInstances = 12
+      spotPrice = 0.09 
+      instanceType = 'm4.large'
+      terminateWhenIdle = true
+    }
+}
+```
+
+##### EC2 execution
+
+**NOTE!!! You will be charged according to your resource use. Monitor/terminate your instances in AWS console!**
+
+Run `nextflow cloud create my-cluster -c 3` to instantiate a cluster with 2 workers and a master node. Wait until the nodes are instantiated and responsive, then ssh into your master node as per instruction printed in your terminal e.g. 
+
+```
+ssh -i /path/to/.ssh/id_rsa your_aws_username@ec2-13-211-211-199.ap-southeast-2.compute.amazonaws.com
+```
+
+From the master node, nextflow can can pull & run 
+
+```
+./nextflow run csiro-crop-informatics/reproducible_poc -r develop -profile docker,ignite
+```
+
+Depending on the compute requirements and whether your [`nextflow.config`](nextflow.config) contains the `autoscale` settings, additional worker nodes may be instantiated to execute processes. 
+
+After the job is complete you can transfer our results, logout from the master node and shutdown the cluster either from AWS console or your local command line by running `nextflow cloud shutdown my-cluster`.
+
+
+
+
+
 ### Execution summary report
 
 After execution of the pipeline a summary [report](report.html) is crated in the working directory.

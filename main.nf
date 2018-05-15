@@ -98,7 +98,7 @@ process fastQC {
 }
 
 process multiQC {    
-  publishDir "${params.outdir}/MultiQC", mode: 'copy'
+  publishDir "${params.outdir}/MultiQC", mode: 'move'
 
   input: 
     file f from fastqc_results.collect()
@@ -145,7 +145,7 @@ process hisat2Align {
 }
 
 process sam2bam {
-  publishDir "${params.outdir}/BAMs/hisat2", mode: 'copy'  
+  publishDir "${params.outdir}/BAMs/hisat2", mode: 'move'  
   tag {nametag}
   input: 
     stdin sam
@@ -176,7 +176,7 @@ process kangaIndex {
 }
 
 process kangaAlign {
-  publishDir "${params.outdir}/BAMs/biokanga", mode: 'copy'
+  publishDir "${params.outdir}/BAMs/biokanga", mode: 'move'
   tag {nametag+" vs "+dbname}
   input:
     set val(nametag),file(r1),file(r2) from kangaReads
