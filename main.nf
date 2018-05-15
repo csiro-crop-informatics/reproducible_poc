@@ -128,36 +128,39 @@ process hisat2Index {
 }
 
 process hisat2Align {
+  publishDir "${params.outdir}/BAMs/hisat2", mode: 'move'
   tag {name+" vs "+dbname}
   input:
     set val(name), file(r1),file(r2) from hisat2reads
     set val(dbname), file("hisat2db.*.ht2") from hisat2dbs
 
-  output:
-    val tag into samname
-    stdout sam
+  output:    
+    set val(tag), file("${tag}.bam") into hisat2BAMs
+//    val tag into samname
+//    stdout sam into ssam
 
   script:
     tag = name+"_vs_"+dbname
     """
-    hisat2 -x hisat2db -f -1 ${r1} -2 ${r2} 
+    hisat2 -x hisat2db -f -1 ${r1} -2 ${r2} \
+    | samtools view -bS -F 4 -F 8 -F 256 - > ${tag}.bam
     """
 }
 
-process sam2bam {
-  publishDir "${params.outdir}/BAMs/hisat2", mode: 'move'  
-  tag {nametag}
-  input: 
-    stdin sam
-    val nametag from samname
+//process sam2bam {
+//  publishDir "${params.outdir}/BAMs/hisat2", mode: 'move'  
+//  tag {nametag}
+//  input: 
+//    stdin sam from ssam
+//    val nametag from samname
 
-  output:
-    set val(nametag), file("*bam") into BAMs
-    
-    """
-    samtools view -bS -F 4 -F 8 -F 256 > ${nametag}.bam
-    """
-}
+//  output:
+//    set val(nametag), file("*bam") into BAMs
+//    
+//    """
+//    samtools view -bS -F 4 -F 8 -F 256 > ${nametag}.bam
+//    """
+//}
 
 process kangaIndex {
   tag{name}
