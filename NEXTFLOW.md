@@ -91,7 +91,7 @@ cloud {
     subnetId = 'subnet-80f749c8'          // Specific to where you set-up your EFS
     sharedStorageId = 'fs-ec6cf125'       // Your EFS ID
     keyFile = '/path/to/.ssh/id_rsa.pub'  //If using non-default key pair
-    instanceType = 't2.medium'
+    instanceType = 't2.large'
     userName = 'your_aws_username'
     //Optional:
     autoscale {
@@ -99,7 +99,7 @@ cloud {
       minInstances = 1
       maxInstances = 12
       spotPrice = 0.09 
-      instanceType = 'm4.large'
+      instanceType = 'm4.xlarge'
       terminateWhenIdle = true
     }
 }
@@ -109,7 +109,7 @@ cloud {
 
 **NOTE!!! You will be charged according to your resource use. Monitor/terminate your instances in AWS console!**
 
-Run `nextflow cloud create my-cluster -c 3` to instantiate a cluster with 2 workers and a master node. Wait until the nodes are instantiated and responsive, then ssh into your master node as per instruction printed in your terminal e.g. 
+Run `nextflow cloud create my-cluster -c 2` to instantiate a cluster with 1 worker node and a master node. Wait until the nodes are instantiated and responsive, then ssh into your master node as per instruction printed in your terminal e.g. 
 
 ```
 ssh -i /path/to/.ssh/id_rsa your_aws_username@ec2-13-211-211-199.ap-southeast-2.compute.amazonaws.com
@@ -122,6 +122,7 @@ From the master node, nextflow can can pull & run
 ```
 
 Depending on the compute requirements and whether your [`nextflow.config`](nextflow.config) contains the `autoscale` settings, additional worker nodes may be instantiated to execute processes. 
+<!--Given current resourse and input settings, an additional `m4.large` instance is added to the cluster.-->
 
 After the job is complete you can transfer our results, logout from the master node and shutdown the cluster either from AWS console or your local command line by running `nextflow cloud shutdown my-cluster`.
 
