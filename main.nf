@@ -1,6 +1,6 @@
 //READ SIMULATION PARAMS
 seqerrs = params.seqerrs
-nreadsarr = params.nreadsarr
+nreadsarr = params.nreads.toString().split(",")
 url = params.url
 name = params.name
 
@@ -15,7 +15,7 @@ def helpMessage() {
     
     Default params:
     seqerrs    : ${params.seqerrs}
-    nreadsarr  : ${params.nreadsarr}
+    nreads     : ${params.nreads}
     url        : ${params.url}
     name       : ${params.name}
     outdir     : ${params.outdir}
@@ -178,6 +178,7 @@ process kangaAlign {
     -i ${r1} \
     -u ${r2} \
     --sfx ${kangadb} \
+    --threads ${task.cpus} \
     -o "${nametag}_vs_${dbname}.bam" \
     --pemode 2 \
     --substitutions 3 
