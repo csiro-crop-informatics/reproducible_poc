@@ -147,21 +147,6 @@ process hisat2Align {
     """
 }
 
-//process sam2bam {
-//  publishDir "${params.outdir}/BAMs/hisat2", mode: 'copy'  
-//  tag {nametag}
-//  input: 
-//    stdin sam from ssam
-//    val nametag from samname
-
-//  output:
-//    set val(nametag), file("*bam") into BAMs
-//    
-//    """
-//    samtools view -bS -F 4 -F 8 -F 256 > ${nametag}.bam
-//    """
-//}
-
 process kangaIndex {
   tag{name}
   input:

@@ -97,21 +97,21 @@ cloud {
     subnetId = 'subnet-80f749c8'          // Specific to where you set-up your EFS
     sharedStorageId = 'fs-ec6cf125'       // Your EFS ID
     keyFile = '/path/to/.ssh/id_rsa.pub'  // If using non-default key pair
-    instanceType = 't2.large'
+    instanceType = 't2.medium'
     userName = 'your_aws_username'
     //Optional:
     autoscale {
       enabled = true
       minInstances = 1
-      maxInstances = 12
+      maxInstances = 8
       spotPrice = 0.09 
-      instanceType = 'm4.xlarge'
+      instanceType = 'm5.xlarge'
       terminateWhenIdle = true
     }
 }
 ```
 
-For more details and background reading see Nextflow and AWS/EC2 documentation.
+For more details and background reading see [Nextflow](https://www.nextflow.io/docs/latest/config.html#scope-cloud) and AWS/EC2 documentation.
 
 ##### EC2 execution
 
@@ -123,7 +123,7 @@ Run `nextflow cloud create my-cluster -c 2` to instantiate a cluster with 1 work
 ssh -i /path/to/.ssh/id_rsa your_aws_username@ec2-13-999-211-199.ap-southeast-2.compute.amazonaws.com
 ```
 
-If you get a `error` give it a couple of minutes before trying again as ssh server may not be up yet. 
+If you get access denied give it a couple of minutes before trying again as ssh server may not be up yet. 
 
 From the master node, nextflow can pull the pipeline from this repo and run it
 
@@ -136,13 +136,13 @@ From the master node, nextflow can pull the pipeline from this repo and run it
 Depending on the compute requirements and whether your [`nextflow.config`](nextflow.config) contains the `autoscale` settings, additional worker nodes may be instantiated to execute processes. 
 <!--Given current resource and input settings, an additional `m4.large` instance is added to the cluster.-->
 
-After the job is complete you can transfer or [sync](https://docs.aws.amazon.com/efs/latest/ug/gs-step-four-sync-files.html) your result files. Don't forget to remove any reminining data from EFS, or it will continue to accumulate cost, if you want to keep data on aws, set-up a cheaper S3.
+After the job is complete you can transfer or [sync](https://docs.aws.amazon.com/efs/latest/ug/gs-step-four-sync-files.html) your result files. **Don't forget to remove any reminining data from EFS, or it will continue to accumulate cost**, if you want to keep data on aws, set-up a cheaper S3.
 
 ```
 rm -rf /mnt/efs/*
 ```
 
-Logout from the master node and shutdown the cluster either from AWS console or from your local command line by running `nextflow cloud shutdown my-cluster`. To be shure double check the list of instances in AWS console to ensure no instancess are running and costing you $$$s.
+Logout from the master node and shutdown the cluster either from AWS console or from your local command line by running `nextflow cloud shutdown my-cluster`. Just in case, **double check the list of instances in AWS console to ensure there is nothing left running and costing you $$$s**.
 
 
 ### Execution summary report and timeline
