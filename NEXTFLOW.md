@@ -126,18 +126,21 @@ ssh -i /path/to/.ssh/id_rsa your_aws_username@ec2-13-999-211-199.ap-southeast-2.
 From the master node, nextflow can pull the pipeline from this repo and run it
 
 ```
-./nextflow run csiro-crop-informatics/reproducible_poc -r develop -profile docker,ignite
+./nextflow run csiro-crop-informatics/reproducible_poc -r develop -profile ec2
 ```
 
-Execution profiles used: 
-
-* `docker` defines container images for the tools
-* `ignite` nextflow will use [Apache Ignite cluster](https://apacheignite.readme.io/v1.0/docs/cluster) executor
+* nextflow will use [Apache Ignite cluster](https://apacheignite.readme.io/v1.0/docs/cluster) executor
 
 Depending on the compute requirements and whether your [`nextflow.config`](nextflow.config) contains the `autoscale` settings, additional worker nodes may be instantiated to execute processes. 
 <!--Given current resource and input settings, an additional `m4.large` instance is added to the cluster.-->
 
-After the job is complete you can transfer or [sync](https://docs.aws.amazon.com/efs/latest/ug/gs-step-four-sync-files.html) your result files, logout from the master node and shutdown the cluster either from AWS console or your local command line by running `nextflow cloud shutdown my-cluster`.
+After the job is complete you can transfer or [sync](https://docs.aws.amazon.com/efs/latest/ug/gs-step-four-sync-files.html) your result files. Don't forget to remove any reminining data from EFS, or it will continue to accumulate cost 
+
+```
+rm -rf /mnt/efs/*
+```
+
+Logout from the master node and shutdown the cluster either from AWS console or from your local command line by running `nextflow cloud shutdown my-cluster`. To be shure double check the list of instances in AWS console to ensure no instancess are running and costing you $$$s.
 
 
 ### Execution summary report and timeline
