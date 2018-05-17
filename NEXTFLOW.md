@@ -123,10 +123,12 @@ Run `nextflow cloud create my-cluster -c 2` to instantiate a cluster with 1 work
 ssh -i /path/to/.ssh/id_rsa your_aws_username@ec2-13-999-211-199.ap-southeast-2.compute.amazonaws.com
 ```
 
+If you get a `error` give it a couple of minutes before trying again as ssh server may not be up yet. 
+
 From the master node, nextflow can pull the pipeline from this repo and run it
 
 ```
-./nextflow run csiro-crop-informatics/reproducible_poc -r develop -profile ec2
+./nextflow run csiro-crop-informatics/reproducible_poc -r develop -profile ec2 --nreadsarr 10000
 ```
 
 * nextflow will use [Apache Ignite cluster](https://apacheignite.readme.io/v1.0/docs/cluster) executor
@@ -134,7 +136,7 @@ From the master node, nextflow can pull the pipeline from this repo and run it
 Depending on the compute requirements and whether your [`nextflow.config`](nextflow.config) contains the `autoscale` settings, additional worker nodes may be instantiated to execute processes. 
 <!--Given current resource and input settings, an additional `m4.large` instance is added to the cluster.-->
 
-After the job is complete you can transfer or [sync](https://docs.aws.amazon.com/efs/latest/ug/gs-step-four-sync-files.html) your result files. Don't forget to remove any reminining data from EFS, or it will continue to accumulate cost 
+After the job is complete you can transfer or [sync](https://docs.aws.amazon.com/efs/latest/ug/gs-step-four-sync-files.html) your result files. Don't forget to remove any reminining data from EFS, or it will continue to accumulate cost, if you want to keep data on aws, set-up a cheaper S3.
 
 ```
 rm -rf /mnt/efs/*
@@ -145,7 +147,7 @@ Logout from the master node and shutdown the cluster either from AWS console or 
 
 ### Execution summary report and timeline
 
-After execution of the pipeline [`report.html`](doc/report.html) and [`timeline.html`](doc/timeline.html) are crated under `flowinfo/`
+After execution of the pipeline [`report.html`](doc/report.html) and [`timeline.html`](doc/timeline.html) are crated under `flowinfo/`, where you will also find execution `trace.txt`.
 
 ### Pipeline flowchart
 
