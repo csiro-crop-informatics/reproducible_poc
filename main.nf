@@ -15,7 +15,7 @@ def helpMessage() {
     
     Default params:
     seqerrs    : ${params.seqerrs}
-    nreads     : ${params.nreads}
+    nreads     : ${params.nreads} - this can be a comma-delimited set e.g. 100,20000,400
     url        : ${params.url}
     name       : ${params.name}
     outdir     : ${params.outdir}
@@ -52,7 +52,7 @@ process kangaSimReads {
     each nreads from nreadsarr
     
   output:
-    set val(nametag),file(r1),file(r2) into kangaReads, hisat2reads, fa2fqreads
+    set val(nametag),file("r1.gz"),file("r2.gz") into kangaReads, hisat2reads, fa2fqreads //simReads 
 
   script:
   nametag = name+"_"+nreads
@@ -63,9 +63,26 @@ process kangaSimReads {
   --in ${ref} \
   --nreads ${nreads} \
   --out r1 \
-  --outpe r2
+  --outpe r2 \
+  && pigz --fast r1 r2
   """
 }
+
+//process pigzCompress {
+
+//  
+//  tag {nametag}
+//  input:
+//    set val(nametag),file(r1),file(r2) from simReads
+//    
+//  output:
+//    set val(nametag),file("*r1.gz"),file("*r2.gz") into kangaReads, hisat2reads, fa2fqreads
+
+
+//  """
+//  pigz --fast  r1 r2 
+//  """
+//}
 
 process fasta2mockFASTQ {
   tag {nametag}
@@ -73,11 +90,11 @@ process fasta2mockFASTQ {
     set val(nametag),file(r1),file(r2) from fa2fqreads
     
   output:
-    set val(nametag), file ("*.q1"), file("*.q2") into FASTQ
+    set val(nametag), file ("*.q1.gz"), file("*.q2.gz") into FASTQ
     
     """
-    fasta2fastqDummy.sh r1 > "${nametag}_r1.q1"
-    fasta2fastqDummy.sh r2 > "${nametag}_r2.q2"
+    zcat ${r1} | fasta2fastqDummy.sh | pigz --fast --stdout > "${nametag}.q1.gz"
+    zcat ${r2} | fasta2fastqDummy.sh | pigz --fast --stdout > "${nametag}.q2.gz"
     """
 }
 
@@ -85,13 +102,13 @@ process fastQC {
   tag {nametag}
 
   input:
-    set val(nametag), file(reads1), file(reads2) from FASTQ 
+    set val(nametag), file("${nametag}.q1.gz"), file("${nametag}.q2.gz") from FASTQ 
 
   output:
     file "*_fastqc.{zip,html}" into fastqc_results
 
     """
-    fastqc -q $reads1 $reads2 //*r1 *r2
+    fastqc -q "${nametag}.q1.gz" "${nametag}.q2.gz"
     """
 
 
