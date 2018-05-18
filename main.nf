@@ -1,6 +1,6 @@
 //READ SIMULATION PARAMS
 seqerrs = params.seqerrs
-nreadsarr = params.nreads.toString().split(",")
+nreadsarr = params.nreads.toString().tokenize(",")
 url = params.url
 name = params.name
 
@@ -67,22 +67,6 @@ process kangaSimReads {
   && pigz --fast r1 r2
   """
 }
-
-//process pigzCompress {
-
-//  
-//  tag {nametag}
-//  input:
-//    set val(nametag),file(r1),file(r2) from simReads
-//    
-//  output:
-//    set val(nametag),file("*r1.gz"),file("*r2.gz") into kangaReads, hisat2reads, fa2fqreads
-
-
-//  """
-//  pigz --fast  r1 r2 
-//  """
-//}
 
 process fasta2mockFASTQ {
   tag {nametag}
@@ -157,7 +141,7 @@ process hisat2Align {
 //    stdout sam into ssam
 
   script:
-    tag = name+"_vs_"+dbname
+    tag = name+"_vs_"+dbname+".hisat2"
     """
     hisat2 -x hisat2db -f -1 ${r1} -2 ${r2} \
     | samtools view -bS -F 4 -F 8 -F 256 - > ${tag}.bam
@@ -182,27 +166,64 @@ process kangaIndex {
 
 process kangaAlign {
   publishDir "${params.outdir}/BAMs/biokanga", mode: 'copy'
-  tag {nametag+" vs "+dbname}
+  tag {name+" vs "+dbname}
   input:
-    set val(nametag),file(r1),file(r2) from kangaReads
+    set val(name),file(r1),file(r2) from kangaReads
     set val(dbname),file(kangadb) from kangadbs
 
   output:
-    set val(nametag), file("${nametag}_vs_${dbname}.bam") into kangaBAMs
+    set val(tag), file("${tag}.bam") into kangaBAMs
 
+  script:
+    tag = name+"_vs_"+dbname+".biokanga"
     """
     biokanga align \
     -i ${r1} \
     -u ${r2} \
     --sfx ${kangadb} \
     --threads ${task.cpus} \
-    -o "${nametag}_vs_${dbname}.bam" \
+    -o "${tag}.bam" \
     --pemode 2 \
     --substitutions 3 
     """
 }
 
 
+//allBAMs = Channel.create()
+//allBAMs.mix(kangaBAMs, hisat2BAMs)
 
+process MOCK_extractStatsFromBAMs {
+  tag {nametag}
+  label "MOCK_PROCESS"
+  input: 
+    set val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
+  
+  output:
+    set val(nametag), file(statsFile) into statsFiles
+  
+//  exec:
+//    println "Placeholder for extracting stats from ${nametag}" 
+   
+  script:
+    """
+    echo "${nametag}" > statsFile
+    """
+  
+}
+
+process MOCK_generateFigures {
+  tag {nametag}
+  label "MOCK_PROCESS"
+  input: 
+    set val(nametag), file(statsFile) from statsFiles
+  
+  output:
+    file figure into figures
+    
+  script:
+    """
+    echo "${nametag}" > figure
+    """
+}
 
 
