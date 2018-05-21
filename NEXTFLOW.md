@@ -1,30 +1,52 @@
 Job execution using [![Nextflow](https://www.nextflow.io/img/nextflow2014_no-bg.png)](https://www.nextflow.io/)
 --------------------------------------------------------
 
-We use [nextflow](https://www.nextflow.io/) to handle compute. One way to make nextflow available on your system: 
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+		- [Alternative ways of running the pipeline](#alternative-ways-of-running-the-pipeline)
+			- [Local/interactive with required software assumed to be available:](#localinteractive-with-required-software-assumed-to-be-available)
+			- [Local/interactive with required software loaded via `module` directives:](#localinteractive-with-required-software-loaded-via-module-directives)
+			- [In container(s) using docker:](#in-containers-using-docker)
+			- [In container(s) using singularity:](#in-containers-using-singularity)
+			- [On a SLURM cluster with modules:](#on-a-slurm-cluster-with-modules)
+			- [In container(s) using singularity on a SLURM cluster with singularity module available](#in-containers-using-singularity-on-a-slurm-cluster-with-singularity-module-available)
+			- [On AWS EC2 cloud](#on-aws-ec2-cloud)
+				- [Prerequisites](#prerequisites)
+				- [EC2 execution](#ec2-execution)
+		- [Planned:](#planned)
+			- [[AWS Batch]](#aws-batch)
+			- [Kubernets](#kubernets)
+		- [Execution summary report, timeline and trace](#execution-summary-report-timeline-and-trace)
+		- [Pipeline flowchart](#pipeline-flowchart)
+
+<!-- /TOC -->
+
+
+
+We use [nextflow](https://www.nextflow.io/) to handle compute. One way to make nextflow available on your system:
 
 `curl -s https://get.nextflow.io | bash && mkdir -p ~/bin && mv nextflow ~/bin && PATH+=":~/bin"`
 
 Current set-up executes a simple test pipeline composed of the following processes
 
-* `curl` 
+* `curl`
   * download a genome assembly
-* [`biokanga`](https://github.com/csiro-crop-informatics/biokanga) 
-  * reference indexing 
+* [`biokanga`](https://github.com/csiro-crop-informatics/biokanga)
+  * reference indexing
   * short read simulation
-  * short read alignment 
+  * short read alignment
 * [`hisat2`](https://ccb.jhu.edu/software/hisat2/)
   * reference indexing
   * short read alignment
-* [`samtools`](http://www.htslib.org/) 
+* [`samtools`](http://www.htslib.org/)
   * converting `hisat2` output SAM to BAM
 * FastQC and MultiQC on (for now) simulated reads converted from FASTA to mock FASTQ
 
 
-The pipeline logic is largely separated from the execution environment configuration. 
+The pipeline logic is largely separated from the execution environment configuration.
 Currently to keep the set-up modular, we opt for container per tool, but if required for efficiency these could be packaged in a single container as far as practical, subject to dependency/environment compatibility.
 
-Below, we list several alternative ways of executing the same pipeline. This assumes you have cloned this repository and run the pipeline in its main directory. Alternatively, replace `nextflow main.nf` with `nextflow run csiro-crop-informatics/reproducible_poc -r develop` to let nextflow handle pulling the repository prior to execution. If you have done so before, run `nextflow pull csiro-crop-informatics/reproducible_poc` to make sure you have the latest revision. 
+Below, we list several alternative ways of executing the same pipeline. This assumes you have cloned this repository and run the pipeline in its main directory. Alternatively, replace `nextflow main.nf` with `nextflow run csiro-crop-informatics/reproducible_poc -r develop` to let nextflow handle pulling the repository prior to execution. If you have done so before, run `nextflow pull csiro-crop-informatics/reproducible_poc` to make sure you have the latest revision.
 
 ### Alternative ways of running the pipeline
 
@@ -54,7 +76,7 @@ Note, for any of the below using `-resume` prevents processes from being re-run 
 
 ```nextflow main.nf -profile slurm,modules```
 
-Execution profiles used: 
+Execution profiles used:
 
 * `slurm` profile sets some SLRUM defaults and ensures processes are submitted using `sbatch`
 * `modules` profile facilitates loading of required software modules
@@ -70,11 +92,11 @@ nextflow main.nf -profile slurm,singularity,singularitymodule
 Execution profiles used:
 
 * `slurm` profile sets some SLRUM defaults and ensures processes are submitted using `sbatch`
-* `singularity` profile facilitates pulling and converting appropriate docker images 
+* `singularity` profile facilitates pulling and converting appropriate docker images
 * `singularitymodule` profile ensures singularity module is loaded on each execution node
 
 
-#### On AWS EC2 cloud 
+#### On AWS EC2 cloud
 
 
 
@@ -86,8 +108,8 @@ Execution profiles used:
 * Setup AWS programmatic access configuration on your local machine. Nextflow must be able to pick-up your credentials to connect to AWS and spawn a virtual cluster. One way to set things up:
   * As root/sudo `apt install awscli`
   * Run `aws config`
-  * Set AWS access ID to the one generated in your AWS account console 
-  * Set AWS access key to the one generated in your AWS account console 
+  * Set AWS access ID to the one generated in your AWS account console
+  * Set AWS access key to the one generated in your AWS account console
   * Set default region to `eu-west-1` (Ireland) where a pre-configured nextflow AMI (`ami-4b7daa32`) is available. We use `ap-southeast-2` (Sydney) instead, but this required cloning the AMI to make it available in this region. The cloned AMI is `ami-054c4e0bad8549c37`.
 * Create EFS volume, record details for `cloud` settings in [`nextflow.config`](nextflow.config). The settings need to be specific to your account, but should follow this pattern
 
@@ -104,7 +126,7 @@ cloud {
       enabled = true
       minInstances = 1
       maxInstances = 8
-      spotPrice = 0.09 
+      spotPrice = 0.09
       instanceType = 'm5.xlarge'
       terminateWhenIdle = true
     }
@@ -117,13 +139,13 @@ For more details and background reading see [Nextflow](https://www.nextflow.io/d
 
 **NOTE!!! You will be charged according to your resource use. Monitor/terminate your instances in AWS console!**
 
-Run `nextflow cloud create my-cluster -c 2` to instantiate a cluster with 1 worker node and a master node (which is also used for compute). Wait until the nodes are instantiated and responsive, then ssh into your master node as per instruction printed in your terminal e.g. 
+Run `nextflow cloud create my-cluster -c 2` to instantiate a cluster with 1 worker node and a master node (which is also used for compute). Wait until the nodes are instantiated and responsive, then ssh into your master node as per instruction printed in your terminal e.g.
 
 ```
 ssh -i /path/to/.ssh/id_rsa your_aws_username@ec2-13-999-211-199.ap-southeast-2.compute.amazonaws.com
 ```
 
-If you get access denied give it a couple of minutes before trying again as ssh server may not be up yet. 
+If you get access denied give it a couple of minutes before trying again as ssh server may not be up yet.
 
 From the master node, nextflow can pull the pipeline from this repo and run it
 
@@ -133,7 +155,7 @@ From the master node, nextflow can pull the pipeline from this repo and run it
 
 * nextflow will use [Apache Ignite cluster](https://apacheignite.readme.io/v1.0/docs/cluster) executor
 
-Depending on the compute requirements and whether your [`nextflow.config`](nextflow.config) contains the `autoscale` settings, additional worker nodes may be instantiated to execute processes. 
+Depending on the compute requirements and whether your [`nextflow.config`](nextflow.config) contains the `autoscale` settings, additional worker nodes may be instantiated to execute processes.
 <!--Given current resource and input settings, an additional `m4.large` instance is added to the cluster.-->
 
 After the job is complete you can transfer or [sync](https://docs.aws.amazon.com/efs/latest/ug/gs-step-four-sync-files.html) your result files. **Don't forget to remove any reminining data from EFS, or it will continue to accumulate cost**, if you want to keep data on aws, set-up a cheaper S3.
@@ -144,18 +166,21 @@ rm -rf /mnt/efs/*
 
 Logout from the master node and shutdown the cluster either from AWS console or from your local command line by running `nextflow cloud shutdown my-cluster`. Just in case, **double check the list of instances in AWS console to ensure there is nothing left running and costing you $$$s**.
 
+### Planned:
+
+#### [AWS Batch]
+
+#### Kubernets
 
 ### Execution summary report, timeline and trace
 
-After execution of the pipeline `report.html` ([such as this one](https://rsuchecki.github.io/reproducible.github.io/report.html)) and `timeline.html` ([like this one](https://rsuchecki.github.io/reproducible.github.io/timeline.html)) are created under `flowinfo/`, where you will also find execution `trace.txt`. 
+After execution of the pipeline `report.html` ([such as this one](https://rsuchecki.github.io/reproducible.github.io/report.html)) and `timeline.html` ([like this one](https://rsuchecki.github.io/reproducible.github.io/timeline.html)) are created under `flowinfo/`, where you will also find execution `trace.txt`.
 The timeline below illustrates the execution of the pipeline for varying number of simulated reads at 1k, 10k and 100k.
 
 ![timeline](doc/timeline.png)
 
 ### Pipeline flowchart
 
-A digraph representation of the pipeline can be produced by nextflow. This can be HTML (`-with-dag flowchart.html`), a [DOT language](https://www.graphviz.org/doc/info/lang.html) file or a figure (pdf, png, svg) generated from DOT if Graphviz is available e.g. `-with-dag flowchart.svg` 
+A digraph representation of the pipeline can be produced by nextflow. This can be HTML (`-with-dag flowchart.html`), a [DOT language](https://www.graphviz.org/doc/info/lang.html) file or a figure (pdf, png, svg) generated from DOT if Graphviz is available e.g. `-with-dag flowchart.svg`
 
 ![flowchart](doc/flowchart.svg)
-
-
