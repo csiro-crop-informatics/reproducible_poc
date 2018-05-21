@@ -150,7 +150,7 @@ Logout from the master node and shutdown the cluster either from AWS console or 
 After execution of the pipeline `report.html` ([such as this one](https://rsuchecki.github.io/reproducible.github.io/report.html)) and `timeline.html` ([like this one](https://rsuchecki.github.io/reproducible.github.io/timeline.html)) are created under `flowinfo/`, where you will also find execution `trace.txt`. 
 The timeline below illustrates the execution of the pipeline for varying number of simulated reads at 1k, 10k and 100k.
 
-![timeline](figs/timeline.png)
+![timeline](doc/timeline.png)
 
 ### Pipeline flowchart
 
