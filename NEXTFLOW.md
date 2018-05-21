@@ -1,33 +1,34 @@
-Job execution using [![Nextflow](https://www.nextflow.io/img/nextflow2014_no-bg.png)](https://www.nextflow.io/)
---------------------------------------------------------
+<!-- TOC START min:1 max:3 link:true update:true -->
+- [Job execution using nextflow](#job-execution-using-nextflow)
+- [Alternative ways of running the pipeline](#alternative-ways-of-running-the-pipeline)
+  - [Local/interactive with required software assumed to be available:](#localinteractive-with-required-software-assumed-to-be-available)
+  - [Local/interactive with required software loaded via `module` directives:](#localinteractive-with-required-software-loaded-via-module-directives)
+  - [In container(s) using docker:](#in-containers-using-docker)
+  - [In container(s) using singularity:](#in-containers-using-singularity)
+  - [On a SLURM cluster with modules:](#on-a-slurm-cluster-with-modules)
+  - [In container(s) using singularity on a SLURM cluster with singularity module available](#in-containers-using-singularity-on-a-slurm-cluster-with-singularity-module-available)
+  - [On AWS EC2 cloud](#on-aws-ec2-cloud)
+    - [Prerequisites](#prerequisites)
+    - [EC2 execution](#ec2-execution)
+  - [Planned:](#planned)
+    - [AWS Batch](#aws-batch)
+    - [Kubernets](#kubernets)
+- [Execution summary report, timeline and trace](#execution-summary-report-timeline-and-trace)
+- [Pipeline flowchart](#pipeline-flowchart)
 
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
-
-		- [Alternative ways of running the pipeline](#alternative-ways-of-running-the-pipeline)
-			- [Local/interactive with required software assumed to be available:](#localinteractive-with-required-software-assumed-to-be-available)
-			- [Local/interactive with required software loaded via `module` directives:](#localinteractive-with-required-software-loaded-via-module-directives)
-			- [In container(s) using docker:](#in-containers-using-docker)
-			- [In container(s) using singularity:](#in-containers-using-singularity)
-			- [On a SLURM cluster with modules:](#on-a-slurm-cluster-with-modules)
-			- [In container(s) using singularity on a SLURM cluster with singularity module available](#in-containers-using-singularity-on-a-slurm-cluster-with-singularity-module-available)
-			- [On AWS EC2 cloud](#on-aws-ec2-cloud)
-				- [Prerequisites](#prerequisites)
-				- [EC2 execution](#ec2-execution)
-		- [Planned:](#planned)
-			- [[AWS Batch]](#aws-batch)
-			- [Kubernets](#kubernets)
-		- [Execution summary report, timeline and trace](#execution-summary-report-timeline-and-trace)
-		- [Pipeline flowchart](#pipeline-flowchart)
-
-<!-- /TOC -->
+<!-- TOC END -->
 
 
 
-We use [nextflow](https://www.nextflow.io/) to handle compute. One way to make nextflow available on your system:
+# Job execution using [nextflow](https://www.nextflow.io/)
 
-`curl -s https://get.nextflow.io | bash && mkdir -p ~/bin && mv nextflow ~/bin && PATH+=":~/bin"`
+We use [![Nextflow](https://www.nextflow.io/img/nextflow2014_no-bg.png)](https://www.nextflow.io/) to handle compute. One way to make nextflow available on your system:
 
-Current set-up executes a simple test pipeline composed of the following processes
+```
+curl -s https://get.nextflow.io | bash && mkdir -p ~/bin && mv nextflow ~/bin && PATH+=":~/bin"
+```
+
+Current set-up executes a simple test pipeline using primarily the following tools
 
 * `curl`
   * download a genome assembly
@@ -48,33 +49,43 @@ Currently to keep the set-up modular, we opt for container per tool, but if requ
 
 Below, we list several alternative ways of executing the same pipeline. This assumes you have cloned this repository and run the pipeline in its main directory. Alternatively, replace `nextflow main.nf` with `nextflow run csiro-crop-informatics/reproducible_poc -r develop` to let nextflow handle pulling the repository prior to execution. If you have done so before, run `nextflow pull csiro-crop-informatics/reproducible_poc` to make sure you have the latest revision.
 
-### Alternative ways of running the pipeline
+# Alternative ways of running the pipeline
 
 Note, for any of the below using `-resume` prevents processes from being re-run if neither input nor scripts have changed.
 
-#### Local/interactive with required software assumed to be available:
+## Local/interactive with required software assumed to be available:
 
-``` nextflow main.nf```
+```
+nextflow main.nf
+```
 
-#### Local/interactive with required software loaded via `module` directives:
+## Local/interactive with required software loaded via `module` directives:
 
-```nextflow main.nf -profile modules```
+```
+nextflow main.nf -profile modules
+```
 
-#### In container(s) using docker:
+## In container(s) using docker:
 
-```nextflow main.nf -profile docker```
+```
+nextflow main.nf -profile docker
+```
 
 <!--Note that this option may cause permissions-based errors, things are -->
 <!--much more straightforward with singularity - see below.-->
 
 
-#### In container(s) using singularity:
+## In container(s) using singularity:
 
-```nextflow main.nf -profile singularity```
+```
+nextflow main.nf -profile singularity
+```
 
-#### On a SLURM cluster with modules:
+## On a SLURM cluster with modules:
 
-```nextflow main.nf -profile slurm,modules```
+```
+nextflow main.nf -profile slurm,modules
+```
 
 Execution profiles used:
 
@@ -82,7 +93,7 @@ Execution profiles used:
 * `modules` profile facilitates loading of required software modules
   * You may have to update the required modules names/versions in [`conf/modules.config`](conf/modules.config) to match those available on your system
 
-#### In container(s) using singularity on a SLURM cluster with singularity module available
+## In container(s) using singularity on a SLURM cluster with singularity module available
 
 ```
 module load singularity
@@ -96,11 +107,9 @@ Execution profiles used:
 * `singularitymodule` profile ensures singularity module is loaded on each execution node
 
 
-#### On AWS EC2 cloud
+## On AWS EC2 cloud
 
-
-
-##### Prerequisites
+### Prerequisites
 
 * Create AWS account and log into your AWS account console
 * Go to *EC2 Dashboard -> NETWORK & SECURITY -> Security Groups* and add/update rule in the default AWS Security Group to allow incoming TCP traffic on all ports (port 22 required for ssh, a range of ports required for intra-cluster communication)
@@ -135,7 +144,7 @@ cloud {
 
 For more details and background reading see [Nextflow](https://www.nextflow.io/docs/latest/config.html#scope-cloud) and AWS/EC2 documentation.
 
-##### EC2 execution
+### EC2 execution
 
 **NOTE!!! You will be charged according to your resource use. Monitor/terminate your instances in AWS console!**
 
@@ -166,20 +175,20 @@ rm -rf /mnt/efs/*
 
 Logout from the master node and shutdown the cluster either from AWS console or from your local command line by running `nextflow cloud shutdown my-cluster`. Just in case, **double check the list of instances in AWS console to ensure there is nothing left running and costing you $$$s**.
 
-### Planned:
+## Planned:
 
-#### [AWS Batch]
+### AWS Batch
 
-#### Kubernets
+### Kubernets
 
-### Execution summary report, timeline and trace
+# Execution summary report, timeline and trace
 
 After execution of the pipeline `report.html` ([such as this one](https://rsuchecki.github.io/reproducible.github.io/report.html)) and `timeline.html` ([like this one](https://rsuchecki.github.io/reproducible.github.io/timeline.html)) are created under `flowinfo/`, where you will also find execution `trace.txt`.
 The timeline below illustrates the execution of the pipeline for varying number of simulated reads at 1k, 10k and 100k.
 
 ![timeline](doc/timeline.png)
 
-### Pipeline flowchart
+# Pipeline flowchart
 
 A digraph representation of the pipeline can be produced by nextflow. This can be HTML (`-with-dag flowchart.html`), a [DOT language](https://www.graphviz.org/doc/info/lang.html) file or a figure (pdf, png, svg) generated from DOT if Graphviz is available e.g. `-with-dag flowchart.svg`
 
