@@ -1,28 +1,29 @@
-<!-- TOC START min:1 max:3 link:true update:true -->
-- [Job execution using nextflow](#job-execution-using-nextflow)
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
+- [Job execution using [nextflow](https://www.nextflow.io/)](#job-execution-using-nextflowhttpswwwnextflowio)
 - [Alternative ways of running the pipeline](#alternative-ways-of-running-the-pipeline)
-  - [Local/interactive with required software assumed to be available:](#localinteractive-with-required-software-assumed-to-be-available)
-  - [Local/interactive with required software loaded via `module` directives:](#localinteractive-with-required-software-loaded-via-module-directives)
-  - [In container(s) using docker:](#in-containers-using-docker)
-  - [In container(s) using singularity:](#in-containers-using-singularity)
-  - [On a SLURM cluster with modules:](#on-a-slurm-cluster-with-modules)
-  - [In container(s) using singularity on a SLURM cluster with singularity module available](#in-containers-using-singularity-on-a-slurm-cluster-with-singularity-module-available)
-  - [On AWS EC2 cloud](#on-aws-ec2-cloud)
-    - [Prerequisites](#prerequisites)
-    - [EC2 execution](#ec2-execution)
-  - [Planned:](#planned)
-    - [AWS Batch](#aws-batch)
-    - [Kubernets](#kubernets)
+	- [Local/interactive with required software assumed to be available](#localinteractive-with-required-software-assumed-to-be-available)
+	- [Local/interactive with required software loaded via `module` directives](#localinteractive-with-required-software-loaded-via-module-directives)
+	- [Local/interactive in containers using docker](#localinteractive-in-containers-using-docker)
+	- [Local/interactive in containers using singularity](#localinteractive-in-containers-using-singularity)
+	- [On a SLURM cluster with modules](#on-a-slurm-cluster-with-modules)
+	- [In containers using singularity on a SLURM cluster with singularity module available](#in-containers-using-singularity-on-a-slurm-cluster-with-singularity-module-available)
+	- [On AWS EC2 cloud](#on-aws-ec2-cloud)
+		- [Prerequisites](#prerequisites)
+		- [EC2 execution](#ec2-execution)
+	- [Planned:](#planned)
+		- [AWS Batch](#aws-batch)
+		- [Kubernets](#kubernets)
 - [Execution summary report, timeline and trace](#execution-summary-report-timeline-and-trace)
 - [Pipeline flowchart](#pipeline-flowchart)
 
-<!-- TOC END -->
-
-
+<!-- /TOC -->
 
 # Job execution using [nextflow](https://www.nextflow.io/)
 
-We use [![Nextflow](https://www.nextflow.io/img/nextflow2014_no-bg.png)](https://www.nextflow.io/) to handle compute. One way to make nextflow available on your system:
+We use [![Nextflow](https://www.nextflow.io/img/nextflow2014_no-bg.png)](https://www.nextflow.io/) to handle compute.
+
+One way to make nextflow available on your system:
 
 ```
 curl -s https://get.nextflow.io | bash && mkdir -p ~/bin && mv nextflow ~/bin && PATH+=":~/bin"
@@ -47,65 +48,69 @@ Current set-up executes a simple test pipeline using primarily the following too
 The pipeline logic is largely separated from the execution environment configuration.
 Currently to keep the set-up modular, we opt for container per tool, but if required for efficiency these could be packaged in a single container as far as practical, subject to dependency/environment compatibility.
 
-Below, we list several alternative ways of executing the same pipeline. This assumes you have cloned this repository and run the pipeline in its main directory. Alternatively, replace `nextflow main.nf` with `nextflow run csiro-crop-informatics/reproducible_poc -r develop` to let nextflow handle pulling the repository prior to execution. If you have done so before, run `nextflow pull csiro-crop-informatics/reproducible_poc` to make sure you have the latest revision.
+Below, we list alternative ways of executing the same pipeline. This assumes you have cloned this repository and run the pipeline in its main directory. Alternatively, replace `nextflow main.nf` with `nextflow run csiro-crop-informatics/reproducible_poc -r develop` to let nextflow handle pulling the repository prior to execution. If you have done so before, run `nextflow pull csiro-crop-informatics/reproducible_poc` to make sure you have the latest revision.
 
 # Alternative ways of running the pipeline
 
+This is a demonstration of how the same pipeline can be run in different compute environments. This flexibility is based on execution profiles defined in [`nextflow.config`](nextflow.config) and the `*.config` files under [`conf/`](conf/).
 Note, for any of the below using `-resume` prevents processes from being re-run if neither input nor scripts have changed.
 
-## Local/interactive with required software assumed to be available:
+## Local/interactive with required software assumed to be available
 
 ```
 nextflow main.nf
 ```
 
-## Local/interactive with required software loaded via `module` directives:
+## Local/interactive with required software loaded via `module` directives
 
 ```
 nextflow main.nf -profile modules
 ```
 
-## In container(s) using docker:
+* The `modules` profile facilitates loading of required software modules
+  * You may have to update the required modules names/versions in [`conf/modules.config`](conf/modules.config)
+
+## Local/interactive in containers using docker
 
 ```
 nextflow main.nf -profile docker
 ```
 
-<!--Note that this option may cause permissions-based errors, things are -->
-<!--much more straightforward with singularity - see below.-->
+* The required containers will be pulled from [Docker Hub](https://hub.docker.com/)
+  * The containers are defined per each process in [`conf/containers.config`](conf/containers.config)
 
-
-## In container(s) using singularity:
+## Local/interactive in containers using singularity
 
 ```
 nextflow main.nf -profile singularity
 ```
+* The required containers will be pulled from [Docker Hub](https://hub.docker.com/)
+  * The containers are defined per each process in [`conf/containers.config`](conf/containers.config)
 
-## On a SLURM cluster with modules:
+## On a SLURM cluster with modules
 
 ```
 nextflow main.nf -profile slurm,modules
 ```
 
-Execution profiles used:
+* Execution profiles used
+  * `slurm` profile sets some SLRUM defaults and ensures processes are submitted using `sbatch`
+  * `modules` profile facilitates loading of required software modules
+    * You may have to update the required modules names/versions in [`conf/modules.config`](conf/modules.config) to match those available on your system
 
-* `slurm` profile sets some SLRUM defaults and ensures processes are submitted using `sbatch`
-* `modules` profile facilitates loading of required software modules
-  * You may have to update the required modules names/versions in [`conf/modules.config`](conf/modules.config) to match those available on your system
-
-## In container(s) using singularity on a SLURM cluster with singularity module available
+## In containers using singularity on a SLURM cluster with singularity module available
 
 ```
 module load singularity
 nextflow main.nf -profile slurm,singularity,singularitymodule
 ```
 
-Execution profiles used:
-
-* `slurm` profile sets some SLRUM defaults and ensures processes are submitted using `sbatch`
-* `singularity` profile facilitates pulling and converting appropriate docker images
-* `singularitymodule` profile ensures singularity module is loaded on each execution node
-
+* Execution profiles used
+  * `slurm` profile sets some SLRUM defaults and ensures processes are submitted using `sbatch`
+  * `singularity` profile facilitates pulling and converting appropriate docker images
+  * `singularitymodule` profile ensures singularity module is loaded on each execution node
+* The required containers will be pulled from [Docker Hub](https://hub.docker.com/)
+  * The containers are defined per each process in [`conf/containers.config`](conf/containers.config)
 
 ## On AWS EC2 cloud
 
