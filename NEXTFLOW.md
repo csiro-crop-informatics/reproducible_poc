@@ -164,7 +164,7 @@ If you get access denied give it a couple of minutes before trying again as ssh 
 From the master node, nextflow can pull the pipeline from this repo and run it
 
 ```
-./nextflow run csiro-crop-informatics/reproducible_poc -r develop -profile ec2 --nreadsarr 10000
+./nextflow run csiro-crop-informatics/reproducible_poc -r develop -profile ec2 --nreads 10000
 ```
 
 * nextflow will use [Apache Ignite cluster](https://apacheignite.readme.io/v1.0/docs/cluster) executor
