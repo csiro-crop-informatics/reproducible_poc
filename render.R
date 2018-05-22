@@ -14,4 +14,7 @@ if(!require(revealjs)){
     library(revealjs, lib.loc=location)
 }
 
-rmarkdown::render("show.Rmd", output_format = "all")
+#rmarkdown::render("show.Rmd", output_format = "all")
+rmarkdown::render("show.Rmd", output_format = "revealjs::revealjs_presentation", output_file = "show.html" )
+rmarkdown::render("show.Rmd", output_format = "html_document", output_file = "docu.html" )
+#rmarkdown::render("show.Rmd", output_format = "beamer_presentation", output_file = "show.pdf")

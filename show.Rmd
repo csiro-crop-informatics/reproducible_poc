@@ -1,87 +1,132 @@
 ---
 title: "A reproducible and reusable publication and analysis workflow"
 author:
-- "Rad Suchecki"
-- <h3>Nathan Watson-Haigh</h3>
-- <h3>Stuart Stephen</h3>
-- <h3>Alex Whan</h3>
+- Rad Suchecki
+- Nathan Watson-Haigh
+- Stuart Stephen
+- Alex Whan
 #subtitle: "Subtitle"
 date: "`r format(Sys.time(), '%A, %d %B, %Y')`"
 #tags: [nothing, nothingness]
 output:
   #pdf_document:
     #default
-  #html_document:
-    #toc: true
-    #toc_float: true
-    #number_sections: true
-    #theme: yeti
-    #highlight: tango
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    theme: yeti
+    highlight: tango
   beamer_presentation:
     toc: true
     slide_level: 2
     highlight: default #specifies the syntax highlighting style. Supported styles include “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock” (specify null to prevent syntax highlighting)
   revealjs::revealjs_presentation:
-    theme: simple #“default”, “simple”, “sky”, “beige”, “serif”, “solarized”, “blood”, “moon”, “night”, “black”, “league” or “white”
-    highlight: pygments # “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock”. Pass null to prevent syntax highlighting.
+    theme: moon #“default”, “simple”, “sky”, “beige”, “serif”, “solarized”, “blood”, “moon”, “night”, “black”, “league” or “white”
+    highlight: tango # “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock”. Pass null to prevent syntax highlighting.
     center: false #specifies whether you want to vertically center content on slides (this defaults to false).
-    transition: fade #"default”, “fade”, “slide”, “convex”, “concave”, “zoom” or “none”.
-    fig_width: 5
-    fig_height: 5
+    transition: slide #"default”, “fade”, “slide”, “convex”, “concave”, “zoom” or “none”.
+    incremental: false
+    fig_width: 6
+    fig_height: 3
     toc: true
+    slide_level: 1 #default=2
 ---
+
+# <mark>Towards </mark> <br/> a reproducible and reusable publication and analysis workflow
 
 ```{r include = FALSE}
 #knitr::opts_chunk$set(echo = FALSE) #resets defaults
 library(viridis) #load required libs here
 ```
 
+----
+
 ## BioKanga
 
 - A suite of bioinformatics tools developed at CSIRO.
 - [https://github.com/csiro-crop-informatics/biokanga](https://github.com/csiro-crop-informatics/biokanga)
->- Aim: evaluation of BioKanga's sequence alignment module vs state-of-the-art tools
+- Aim:
+  * evaluation of BioKanga's sequence alignment module vs state-of-the-art tools
+  * reproducibility
+
+----
 
 ## Modular workflow
 - we developed a modular workflow using ~~two popular automation frameworks, Snakemake and~~ [Nextflow](https://www.nextflow.io/)
 
->- Individual tasks are executed in Cloud or HPC environment using dedicated, ~~lightweight~~ (Docker/Singularity) containers.
->- Raw data is acquired from a public sources, processed and analysed.
->- Final document including dynamically generated figures and tables is compiled from R Markdown <strike> or LaTeX/knitr </strike>.
+- Individual tasks are executed in Cloud or HPC environment using dedicated, ~~lightweight~~ (Docker/Singularity) containers.
+- Raw data is acquired from a public sources, processed and analysed.
+- Final document including dynamically generated figures and tables is compiled from R Markdown <strike> or LaTeX/knitr </strike>.
 
+----
 
-## ![Nextflow](figs/nextflow2014_no-bg.png)
+## [![Nextflow](https://www.nextflow.io/img/nextflow2014_no-bg.png)](https://www.nextflow.io/)
 
->- Separation of pipeline logic from compute
->- Polyglot, (although Nextflow syntax is a superset of Groovy)
+- Portability
+- Scalability
+- Reproducibility
 
->- Portability
->- Scalability
->- Reproducibility
+---
 
+## [![Nextflow](https://www.nextflow.io/img/nextflow2014_no-bg.png)](https://www.nextflow.io/)
 
-## Viridis colors
+- Separation of pipeline logic from compute
+- Syntax is a superset of Groovy
+- Polyglot
+  - mixing scripting languages
 
-```{r}
-image(volcano, col = viridis(200))
+----
+
+![Flowchart](figs/flowchart.png)
+
+----
+
+## Pipeline logic
+
+* Primarily definitions of processes, each with well defined input and output channels
+
+```{bash, comment=''}
+cat main.nf
 ```
 
-## Magma colors
+----
 
-```{r}
-image(volcano, col = viridis(200, option = "A"))
+## Compute profiles
+
+* __Implemented:__
+  - `standard` i.e. local/interactive assuming all software available
+  - `slurm`  
+  - `modules`
+  - `docker`
+  - `singularity`
+  - `ec2`  
+* __Upcoming:__
+  - `k8s`
+  - `awsbatch`
+
+----
+
+
+## Modules
+
+* Required modules are defined separately and explicitly for each process
+
+```{bash, comment=''}
+cat conf/modules.config
 ```
 
-## Inferno colors
+* Unfortunately, these are compute environment specific
 
-```{r}
-image(volcano, col = viridis(200, option = "B"))
+----
+
+## Containers
+
+* Required containers are defined separately and explicitly for each process
+* Available on docker hub
+  * Used both by `docker` and `singularity`
+  * Always specify version tag
+
+```{bash, comment=''}
+cat conf/containers.config
 ```
-
-## Plasma colors
-
-```{r}
-image(volcano, col = viridis(200, option = "C"))
-```
-
-## Contact
