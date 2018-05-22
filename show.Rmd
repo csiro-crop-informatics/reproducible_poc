@@ -1,8 +1,10 @@
 ---
 title: "Viridis Presentation"
 output: 
+  pdf_document:
+    default
   revealjs::revealjs_presentation:
-    theme: league
+    theme: solarized
 ---
 
 ```{r include = FALSE}
