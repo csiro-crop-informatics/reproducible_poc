@@ -1,6 +1,19 @@
 #!/usr/bin/env Rscript
 
-library(rmarkdown)
+#required modules if executed on the cluster: R/3.4.4 pandoc/1.12.3 
+
+if(!require(rmarkdown)){
+    install.packages("rmarkdown")
+    library(rmarkdown)
+}
+
+if(!require(revealjs)){
+    location <- "~/local/R_libs/"
+    dir.create(location, recursive = TRUE) 
+    install.packages("revealjs", lib=location, repos='https://cran.csiro.au')
+    library(revealjs, lib.loc=location)
+}
+
 rmarkdown::render("doc.Rmd", output_format = "all")
 rmarkdown::render("show.Rmd", output_format = "all")
 
