@@ -1,25 +1,64 @@
 ---
-title: "Viridis Presentation"
-output: 
-  pdf_document:
-    default
+title: "A reproducible and reusable publication and analysis workflow"
+author:
+- "Rad Suchecki"
+- <h3>Nathan Watson-Haigh</h3>
+- <h3>Stuart Stephen</h3>
+- <h3>Alex Whan</h3>
+#subtitle: "Subtitle"
+date: "`r format(Sys.time(), '%A, %d %B, %Y')`"
+#tags: [nothing, nothingness]
+output:
+  #pdf_document:
+    #default
+  #html_document:
+    #toc: true
+    #toc_float: true
+    #number_sections: true
+    #theme: yeti
+    #highlight: tango
+  beamer_presentation:
+    toc: true
+    slide_level: 2
+    highlight: default #specifies the syntax highlighting style. Supported styles include “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock” (specify null to prevent syntax highlighting)
   revealjs::revealjs_presentation:
-    theme: solarized
+    theme: simple #“default”, “simple”, “sky”, “beige”, “serif”, “solarized”, “blood”, “moon”, “night”, “black”, “league” or “white”
+    highlight: pygments # “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock”. Pass null to prevent syntax highlighting.
+    center: false #specifies whether you want to vertically center content on slides (this defaults to false).
+    transition: fade #"default”, “fade”, “slide”, “convex”, “concave”, “zoom” or “none”.
+    fig_width: 5
+    fig_height: 5
+    toc: true
 ---
 
 ```{r include = FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-library(viridis)
+#knitr::opts_chunk$set(echo = FALSE) #resets defaults
+library(viridis) #load required libs here
 ```
 
-The [viridis](https://github.com/sjmgarnier/viridis) package contains four color palettes, revealed in the plots that follow. 
+## BioKanga
 
->- Viridis
->- Magma
->- Inferno
->- Plasma
+- A suite of bioinformatics tools developed at CSIRO.
+- [https://github.com/csiro-crop-informatics/biokanga](https://github.com/csiro-crop-informatics/biokanga)
+>- Aim: evaluation of BioKanga's sequence alignment module vs state-of-the-art tools
 
-Each plot displays a contour map of the Maunga Whau volcano in Auckland, New Zealand.
+## Modular workflow
+- we developed a modular workflow using ~~two popular automation frameworks, Snakemake and~~ [Nextflow](https://www.nextflow.io/)
+
+>- Individual tasks are executed in Cloud or HPC environment using dedicated, ~~lightweight~~ (Docker/Singularity) containers.
+>- Raw data is acquired from a public sources, processed and analysed.
+>- Final document including dynamically generated figures and tables is compiled from R Markdown <strike> or LaTeX/knitr </strike>.
+
+
+## ![Nextflow](figs/nextflow2014_no-bg.png)
+
+>- Separation of pipeline logic from compute
+>- Polyglot, (although Nextflow syntax is a superset of Groovy)
+
+>- Portability
+>- Scalability
+>- Reproducibility
+
 
 ## Viridis colors
 
@@ -45,3 +84,4 @@ image(volcano, col = viridis(200, option = "B"))
 image(volcano, col = viridis(200, option = "C"))
 ```
 
+## Contact
