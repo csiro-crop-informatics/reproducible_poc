@@ -23,7 +23,7 @@ output:
     slide_level: 2
   revealjs::revealjs_presentation:
     theme: beige #“default”, “simple”, “sky”, “beige”, “serif”, “solarized”, “blood”, “moon”, “night”, “black”, “league” or “white”
-    highlight: kate # “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock”. Pass null to prevent syntax highlighting.
+    highlight: default # “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock”. Pass null to prevent syntax highlighting.
     center: false #specifies whether you want to vertically center content on slides (this defaults to false).
     transition: slide #"default”, “fade”, “slide”, “convex”, “concave”, “zoom” or “none”.
     incremental: false
@@ -100,7 +100,7 @@ output:
 ## Pipeline flow
 
 ```{bash, echo = FALSE}
-dot -Tpng -Gsize=9,6.6\! -Gdpi=100 -odoc/flowchart_small.png doc/flowchart.dot
+dot -Tpng -Gsize=9,7\! -Gdpi=100 -odoc/flowchart_small.png doc/flowchart.dot
 ```
 
 [![Flowchart](doc/flowchart_small.png)](doc/flowchart.png)
@@ -178,7 +178,20 @@ Some of the supported output formats:
 * MS Word, ODT, RTF 
 * Markdown, and Github flavored Markdown documents
 
+----
 
+## This presentation
+
+* Dependencies
+  * R
+  * Pandoc
+  * `rmarkdown` R package
+  * `revealjs` R package
+* Use RStudio or a simple `RScript` from the command line
+
+```{bash, comment='', echo = FALSE}
+head -15 render.R
+```
 
 ----
 

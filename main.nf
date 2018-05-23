@@ -4,6 +4,7 @@ nreadsarr = params.nreads.toString().tokenize(",")
 //INPUT GENOME PARAMS
 url = params.url
 name = params.name
+writeup = file(params.writeup)
 
 def helpMessage() {
     log.info"""
@@ -20,6 +21,7 @@ def helpMessage() {
     url        : ${params.url}
     name       : ${params.name}
     outdir     : ${params.outdir}
+    template   : ${params.writeup}
     """.stripIndent()
 }
 
@@ -218,4 +220,17 @@ process MOCK_generateFigures {
     """
 }
 
+process MOCK_generateReport {
+  label "MOCK_PROCESS"
+  input: 
+    set file(metadata), file(figure) from figures.collect()
+    set val(nametag), file(statsFile) from statsFiles.collect()
+    file "*multiqc_report.html" from multiqc_report
+    file "*_data" from multiqc_data
+    file writeup
 
+    """
+    echo "do something"
+    """
+
+}
