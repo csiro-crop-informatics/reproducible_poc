@@ -39,6 +39,7 @@ process fetchRef {
   output:
     set val(name), file(ref) into kangaRefs, hisat2Refs, simReadsRefs
 
+  script:
     """
     curl ${url} | gunzip --stdout > ref
     """

@@ -16,7 +16,9 @@ if(!require(revealjs)){
 
 #rmarkdown::render("show.Rmd", output_format = "all")
 rmarkdown::render("show.Rmd", output_format = "revealjs::revealjs_presentation", output_file = "show.html" )
-rmarkdown::render("show.Rmd", output_format = "html_document", output_file = "docu.html" )
+#browseURL("show.html")
+
+#rmarkdown::render("show.Rmd", output_format = "html_document", output_file = "docu.html" )
 #rmarkdown::render("show.Rmd", output_format = "slidy_presentation", output_file = "slidy.html" )
 #rmarkdown::render("show.Rmd", output_format = "ioslides_presentation", output_file = "iso.html" )
 #rmarkdown::render("show.Rmd", output_format = "beamer_presentation", output_file = "show.pdf")

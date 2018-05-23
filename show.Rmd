@@ -1,5 +1,5 @@
 ---
-title: "A reproducible and reusable publication and analysis workflow"
+title: "<small>Towards</small> a reproducible and reusable publication and analysis workflow"
 author:
 - Rad Suchecki
 - Nathan Watson-Haigh
@@ -18,22 +18,24 @@ output:
     theme: yeti
     highlight: tango
   beamer_presentation:
+    highlight: default #specifies the syntax highlighting style. Supported styles include “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock” (specify null to prevent syntax highlighting)
     toc: true
     slide_level: 2
-    highlight: default #specifies the syntax highlighting style. Supported styles include “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock” (specify null to prevent syntax highlighting)
   revealjs::revealjs_presentation:
-    theme: sky #“default”, “simple”, “sky”, “beige”, “serif”, “solarized”, “blood”, “moon”, “night”, “black”, “league” or “white”
+    theme: beige #“default”, “simple”, “sky”, “beige”, “serif”, “solarized”, “blood”, “moon”, “night”, “black”, “league” or “white”
     highlight: kate # “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock”. Pass null to prevent syntax highlighting.
     center: false #specifies whether you want to vertically center content on slides (this defaults to false).
     transition: slide #"default”, “fade”, “slide”, “convex”, “concave”, “zoom” or “none”.
     incremental: false
-    fig_width: 6
-    fig_height: 2
-    slide_level: 1 #default=2
-    width: 1920
-    height: 1080
-    autosize: true
     css: reveal.css
+    slide_level: 1 #default=2
+    self_contained: false
+    reveal_plugins: ["notes"]
+    reveal_options:
+      slideNumber: true
+      margin: 0.1
+      width: 1280
+      height: 800
   slidy_presentation:
     font_adjustment: -1
   ioslides_presentation:
@@ -42,31 +44,23 @@ output:
 
 ---
 
-# <mark>Towards</mark> a reproducible and reusable publication and analysis workflow
+
 
 ```{r include = FALSE}
+# <mark>Towards</mark> a reproducible and reusable publication and analysis workflow
 #knitr::opts_chunk$set(echo = FALSE) #resets defaults
-library(viridis) #load required libs here
+#library(viridis) #load required libs here
 ```
 
-# Two-column Layout
 
-.pull-left[
-- a bullet
-- another bullet
-]
 
-.pull-right[
-- a bullet
-- another bullet
-]
 
-----
-
-## BioKanga
+## BioKanga {incremental=false}
 
 - A suite of bioinformatics tools developed at CSIRO.
 - [https://github.com/csiro-crop-informatics/biokanga](https://github.com/csiro-crop-informatics/biokanga)
+
+
 
 - Aim:
   * evaluation of BioKanga's sequence alignment module vs state-of-the-art tools
@@ -86,20 +80,24 @@ library(viridis) #load required libs here
 
 ## [Nextflow](https://www.nextflow.io/)
 
-* Promises
+### Promises 
   * Portability
   * Scalability
   * Reproducibility
 
-
-* Features
+### Features 
   * Separation of pipeline logic from compute
   * Syntax is a superset of Groovy
   * Polyglot
     * mixing scripting languages
+  * Multiple _executors_
+    * SGE, LSF, SLURM, PBS/Torque, NQSII HTCondor, Ignite, Kubernets, AWS Batch
+
 
 
 ----
+
+## Pipeline flow
 
 ```{bash, echo = FALSE}
 dot -Tpng -Gsize=9,6.6\! -Gdpi=100 -odoc/flowchart_small.png doc/flowchart.dot
@@ -109,7 +107,7 @@ dot -Tpng -Gsize=9,6.6\! -Gdpi=100 -odoc/flowchart_small.png doc/flowchart.dot
 
 ----
 
-## Pipeline logic
+## Pipeline syntax
 
 * Primarily definitions of processes, each with well defined input and output channels
 
@@ -128,13 +126,14 @@ cat main.nf
   - `docker`
   - `singularity`
   - `ec2`
-* __Upcoming:__ `k8s`, `awsbatch`
 
 Some of the profiles are intended to be used in concert, e.g. 
 
 ```{bash, eval = FALSE}
 nextflow run main.nf -profile slurm,modules
 ```
+
+* __Upcoming:__ `k8s`, `awsbatch`
 
 ----
 
@@ -165,7 +164,20 @@ cat conf/containers.config
 
 ----
 
-## 
+## Generating reports/publications/slides from R Markdown 
+
+![Tool-chain](https://d33wubrfki0l68.cloudfront.net/61d189fd9cdf955058415d3e1b28dd60e1bd7c9b/9791d/images/rmarkdownflow.png)
+
+Some of the supported output formats:
+
+* HTML* documents and slide-shows using 
+  * Slidy, ioslides, **reveal.js**
+* PDF
+  * LaTeX
+  * *LaTeX Beamer slides*
+* MS Word, ODT, RTF 
+* Markdown, and Github flavored Markdown documents
+
 
 
 ----
