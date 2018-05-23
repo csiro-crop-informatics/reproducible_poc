@@ -22,23 +22,44 @@ output:
     slide_level: 2
     highlight: default #specifies the syntax highlighting style. Supported styles include “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock” (specify null to prevent syntax highlighting)
   revealjs::revealjs_presentation:
-    theme: moon #“default”, “simple”, “sky”, “beige”, “serif”, “solarized”, “blood”, “moon”, “night”, “black”, “league” or “white”
-    highlight: tango # “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock”. Pass null to prevent syntax highlighting.
+    theme: sky #“default”, “simple”, “sky”, “beige”, “serif”, “solarized”, “blood”, “moon”, “night”, “black”, “league” or “white”
+    highlight: kate # “default”, “tango”, “pygments”, “kate”, “monochrome”, “espresso”, “zenburn”, and “haddock”. Pass null to prevent syntax highlighting.
     center: false #specifies whether you want to vertically center content on slides (this defaults to false).
     transition: slide #"default”, “fade”, “slide”, “convex”, “concave”, “zoom” or “none”.
     incremental: false
     fig_width: 6
-    fig_height: 3
-    toc: true
+    fig_height: 2
     slide_level: 1 #default=2
+    width: 1920
+    height: 1080
+    autosize: true
+    css: reveal.css
+  slidy_presentation:
+    font_adjustment: -1
+  ioslides_presentation:
+    widescreen: true
+    transition: faster
+
 ---
 
-# <mark>Towards </mark> <br/> a reproducible and reusable publication and analysis workflow
+# <mark>Towards</mark> a reproducible and reusable publication and analysis workflow
 
 ```{r include = FALSE}
 #knitr::opts_chunk$set(echo = FALSE) #resets defaults
 library(viridis) #load required libs here
 ```
+
+# Two-column Layout
+
+.pull-left[
+- a bullet
+- another bullet
+]
+
+.pull-right[
+- a bullet
+- another bullet
+]
 
 ----
 
@@ -46,9 +67,11 @@ library(viridis) #load required libs here
 
 - A suite of bioinformatics tools developed at CSIRO.
 - [https://github.com/csiro-crop-informatics/biokanga](https://github.com/csiro-crop-informatics/biokanga)
+
 - Aim:
   * evaluation of BioKanga's sequence alignment module vs state-of-the-art tools
-  * reproducibility
+  * turn-key reproducibility
+
 
 ----
 
@@ -61,24 +84,28 @@ library(viridis) #load required libs here
 
 ----
 
-## [![Nextflow](https://www.nextflow.io/img/nextflow2014_no-bg.png)](https://www.nextflow.io/)
+## [Nextflow](https://www.nextflow.io/)
 
-- Portability
-- Scalability
-- Reproducibility
+* Promises
+  * Portability
+  * Scalability
+  * Reproducibility
 
----
 
-## [![Nextflow](https://www.nextflow.io/img/nextflow2014_no-bg.png)](https://www.nextflow.io/)
+* Features
+  * Separation of pipeline logic from compute
+  * Syntax is a superset of Groovy
+  * Polyglot
+    * mixing scripting languages
 
-- Separation of pipeline logic from compute
-- Syntax is a superset of Groovy
-- Polyglot
-  - mixing scripting languages
 
 ----
 
-![Flowchart](figs/flowchart.png)
+```{bash, echo = FALSE}
+dot -Tpng -Gsize=9,6.6\! -Gdpi=100 -odoc/flowchart_small.png doc/flowchart.dot
+```
+
+[![Flowchart](doc/flowchart_small.png)](doc/flowchart.png)
 
 ----
 
@@ -92,18 +119,22 @@ cat main.nf
 
 ----
 
-## Compute profiles
+## Compute profiles 
 
 * __Implemented:__
   - `standard` i.e. local/interactive assuming all software available
-  - `slurm`  
+  - `slurm`
   - `modules`
   - `docker`
   - `singularity`
-  - `ec2`  
-* __Upcoming:__
-  - `k8s`
-  - `awsbatch`
+  - `ec2`
+* __Upcoming:__ `k8s`, `awsbatch`
+
+Some of the profiles are intended to be used in concert, e.g. 
+
+```{bash, eval = FALSE}
+nextflow run main.nf -profile slurm,modules
+```
 
 ----
 
@@ -117,6 +148,7 @@ cat conf/modules.config
 ```
 
 * Unfortunately, these are compute environment specific
+* On the up-side - updating these should be all that is required to run the pipeline on a different SLURM cluster
 
 ----
 
@@ -130,3 +162,20 @@ cat conf/modules.config
 ```{bash, comment=''}
 cat conf/containers.config
 ```
+
+----
+
+## 
+
+
+----
+
+## Further Work
+
+* More systematic evaluation of BioKanga alignment module vs other tools
+  * At default settings
+  * Exploration of parameter space, optimisation
+* Refinement of document generation
+  * R Markdown not as flexible as advertised
+    * Could the generation of report, slides in various formats 
+* Evaluation of Nextflow against Snakemake

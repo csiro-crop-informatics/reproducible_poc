@@ -4,7 +4,6 @@ nreadsarr = params.nreads.toString().tokenize(",")
 //INPUT GENOME PARAMS
 url = params.url
 name = params.name
-rmarkdownfile = file(params.rmarkdown)
 
 def helpMessage() {
     log.info"""
@@ -21,7 +20,6 @@ def helpMessage() {
     url        : ${params.url}
     name       : ${params.name}
     outdir     : ${params.outdir}
-    rmarkdown  : ${params.rmarkdown}
     """.stripIndent()
 }
 
@@ -203,6 +201,7 @@ process MOCK_extractStatsFromBAMs {
 }
 
 process MOCK_generateFigures {
+  publishDir "${params.outdir}/figures/", mode: 'copy'
   tag {nametag}
   label "MOCK_PROCESS"
   input:
@@ -218,36 +217,4 @@ process MOCK_generateFigures {
     """
 }
 
-process generateReport {
-  publishDir "${params.outdir}", mode: 'copy'
-  
-  input:
-    set val(nametag), file(statsFile) from statsFiles
-    set val(metadata), file(figure) from figures
-    file "*multiqc_report.html" from multiqc_report
-    file "*_data" from multiqc_data
 
-  output:
-    file "show.html"
-    file "docu.html"
-
-  script:
-    """
-    #!/usr/bin/env Rscript
-
-    #required modules if executed on the cluster: R/3.4.4 pandoc/1.12.3
-
-    #Install packages if absent
-    if(!require(rmarkdown)){
-        install.packages("rmarkdown")
-        library(rmarkdown)
-    }
-    if(!require(revealjs)){
-        location <- "~/local/R_libs/"
-        dir.create(location, recursive = TRUE)
-        install.packages("revealjs", lib=location, repos='https://cran.csiro.au')
-        library(revealjs, lib.loc=location)
-    }
-    rmarkdown::render("${rmarkdownfile}", output_format = "revealjs::revealjs_presentation", output_file = "show.html" )
-    """
-}
