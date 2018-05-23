@@ -4,6 +4,7 @@ nreadsarr = params.nreads.toString().tokenize(",")
 //INPUT GENOME PARAMS
 url = params.url
 name = params.name
+rmarkdownfile = file(params.rmarkdown)
 
 def helpMessage() {
     log.info"""
@@ -20,6 +21,7 @@ def helpMessage() {
     url        : ${params.url}
     name       : ${params.name}
     outdir     : ${params.outdir}
+    rmarkdown  : ${params.rmarkdown}
     """.stripIndent()
 }
 
@@ -102,7 +104,7 @@ process multiQC {
 
   output:
     file "*multiqc_report.html" into multiqc_report
-    file "*_data"
+    file "*_data" into multiqc_data
 
     """
     pwd
@@ -188,7 +190,7 @@ process MOCK_extractStatsFromBAMs {
     set val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
 
   output:
-    set val(nametag), file(statsFile) into statsFiles
+    set val(nametag), file(statsFile) into statsFiles, statsFilesForFigures
 
 //  exec:
 //    println "Placeholder for extracting stats from ${nametag}"
@@ -204,13 +206,48 @@ process MOCK_generateFigures {
   tag {nametag}
   label "MOCK_PROCESS"
   input:
-    set val(nametag), file(statsFile) from statsFiles
+    set val(nametag), file(statsFile) from statsFilesForFigures
 
   output:
-    file figure into figures
+    set file(metadata), file(figure) into figures
 
   script:
     """
     echo "${nametag}" > figure
+    echo "${nametag}" > metadata
+    """
+}
+
+process generateReport {
+  publishDir "${params.outdir}", mode: 'copy'
+  
+  input:
+    set val(nametag), file(statsFile) from statsFiles
+    set val(metadata), file(figure) from figures
+    file "*multiqc_report.html" from multiqc_report
+    file "*_data" from multiqc_data
+
+  output:
+    file "show.html"
+    file "docu.html"
+
+  script:
+    """
+    #!/usr/bin/env Rscript
+
+    #required modules if executed on the cluster: R/3.4.4 pandoc/1.12.3
+
+    #Install packages if absent
+    if(!require(rmarkdown)){
+        install.packages("rmarkdown")
+        library(rmarkdown)
+    }
+    if(!require(revealjs)){
+        location <- "~/local/R_libs/"
+        dir.create(location, recursive = TRUE)
+        install.packages("revealjs", lib=location, repos='https://cran.csiro.au')
+        library(revealjs, lib.loc=location)
+    }
+    rmarkdown::render("${rmarkdownfile}", output_format = "revealjs::revealjs_presentation", output_file = "show.html" )
     """
 }
