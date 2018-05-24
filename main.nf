@@ -63,8 +63,6 @@ process kangaSimReads {
     set val(nametag),file("r1.gz"),file("r2.gz") into kangaReads, hisat2reads, fa2fqreads //simReads 
 
   script:
-    println(rep)
-    println(nrepeat)
     nametag = nrepeat == 1 ? name+"_"+nreads : name+"_"+nreads+"_"+rep
     """
     biokanga simreads \
