@@ -20,13 +20,14 @@ def helpMessage() {
     nextflow run csiro-crop-informatics/reproducible_poc -r develop
 
     Default params:
-    seqerrs    : ${params.seqerrs}
-    nreads     : ${params.nreads} - this can be a comma-delimited set e.g. 100,20000,400
-    nrepeat   : ${params.nrepeat} 
-    url        : ${params.url}
-    name       : ${params.name}
-    outdir     : ${params.outdir}
-    template   : ${params.writeup}
+    seqerrs     : ${params.seqerrs}
+    nreads      : ${params.nreads} - this can be a comma-delimited set e.g. 100,20000,400
+    nrepeat     : ${params.nrepeat} 
+    url         : ${params.url}
+    name        : ${params.name}
+    outdir      : ${params.outdir}
+    publishmode : ${params.publishmode} use copy or move if working across filesystems
+    template    : ${params.writeup}
     """.stripIndent()
 }
 
@@ -105,8 +106,6 @@ process fastQC {
 }
 
 process multiQC {
-  publishDir "${params.outdir}/MultiQC", mode: 'copy'
-
   input:
     file f from fastqc_results.collect()
 
@@ -134,7 +133,6 @@ process hisat2Index {
 }
 
 process hisat2Align {
-  publishDir "${params.outdir}/BAMs/hisat2", mode: 'copy'
   tag {name+" vs "+dbname}
   input:
     set val(name), file(r1),file(r2) from hisat2reads
@@ -168,7 +166,6 @@ process kangaIndex {
 }
 
 process kangaAlign {
-  publishDir "${params.outdir}/BAMs/biokanga", mode: 'copy'
   tag {name+" vs "+dbname}
   input:
     set val(name),file(r1),file(r2) from kangaReads
@@ -207,7 +204,6 @@ process extractStatsFromBAMs {
 }
 
 process MOCK_generateFigures {
-  publishDir "${params.outdir}/figures/", mode: 'copy'
   tag {nametag}
   label "MOCK_PROCESS"
   input:
@@ -232,6 +228,8 @@ process MOCK_generateReport {
     file "*_data" from multiqc_data
     file writeup
 
+  script:
+    println("Figures.size = "+figures.length())
     """
     echo "do something"
     """

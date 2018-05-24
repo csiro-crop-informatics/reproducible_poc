@@ -124,17 +124,20 @@ cat main.nf
 ## Compute profiles 
 
 * __Implemented:__
-  - `standard` i.e. local/interactive assuming all software available
+  - `standard` (i.e. local/interactive assuming all software available)
   - `slurm`
   - `modules`
   - `docker`
   - `singularity`
   - `ec2`
 
-Some of the profiles are intended to be used in concert, e.g. 
+
 
 ```{bash, eval = FALSE}
+# some of the profiles can, and others are intended to be used in concert, e.g. 
 nextflow run main.nf -profile slurm,modules
+# or 
+nextflow run main.nf -profile slurm,singularity,singularitymodule
 ```
 
 * __Upcoming:__ `k8s`, `awsbatch`
@@ -215,10 +218,9 @@ head -15 render.R
   * At default settings
   * Exploration of parameter space, optimisation
 * Refinement of document generation, as R Markdown rendering not as flexible as hoped
-  * Generation of ouptut in different formats somewhat limited
-  * For more complex content where pure (R) Markdown is insuffcient have to decide on either 
-    * (R) Markdown with LaTeX 
-    * (R) Markdown with HTML
+  * Generation of ouptut in different formats somewhat limited, for more complex content where pure (R)Markdown is insuffcient have to decide on either 
+    * (R)Markdown with LaTeX 
+    * (R)Markdown with HTML
 * Evaluation of Nextflow against Snakemake
 
 
