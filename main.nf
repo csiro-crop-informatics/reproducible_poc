@@ -5,6 +5,7 @@ nrepeat = params.nrepeat
 //INPUT GENOME PARAMS
 url = params.url
 name = params.name
+writeup = file(params.writeup)
 
 
 //TODO add (conditional?) simulation of transcript reads using a feature file biokanga simreads --featfile 
@@ -15,9 +16,9 @@ def helpMessage() {
     csiro-crop-informatics/reproducible_poc  ~  version ${params.version}
     ===========================================================
     Usage:
-    
+
     nextflow run csiro-crop-informatics/reproducible_poc -r develop
-    
+
     Default params:
     seqerrs    : ${params.seqerrs}
     nreads     : ${params.nreads} - this can be a comma-delimited set e.g. 100,20000,400
@@ -25,10 +26,11 @@ def helpMessage() {
     url        : ${params.url}
     name       : ${params.name}
     outdir     : ${params.outdir}
+    template   : ${params.writeup}
     """.stripIndent()
 }
 
-// Show help emssage
+// Show help message
 params.help = false
 if (params.help){
     helpMessage()
@@ -40,13 +42,12 @@ process fetchRef {
   input:
     val url
     val name
-    //set val(name), val(url) from namedurl
-    
+
   output:
     set val(name), file(ref) into kangaRefs, hisat2Refs, simReadsRefs
 
+  script:
     """
-    #head -1000 ${baseDir}/data/ref1k > ref
     curl ${url} | gunzip --stdout > ref
     """
 }
@@ -60,7 +61,7 @@ process kangaSimReads {
     each rep from 1..nrepeat
 
   output:
-    set val(nametag),file("r1.gz"),file("r2.gz") into kangaReads, hisat2reads, fa2fqreads //simReads 
+    set val(nametag),file("r1.gz"),file("r2.gz") into kangaReads, hisat2reads, fa2fqreads //simReads
 
   script:
     nametag = nrepeat == 1 ? name+"_"+nreads : name+"_"+nreads+"_"+rep
@@ -80,10 +81,10 @@ process fasta2mockFASTQ {
   tag {nametag}
   input:
     set val(nametag),file(r1),file(r2) from fa2fqreads
-    
+
   output:
     set val(nametag), file ("*.q1.gz"), file("*.q2.gz") into FASTQ
-    
+
     """
     zcat ${r1} | fasta2fastqDummy.sh | pigz --fast --stdout > "${nametag}.q1.gz"
     zcat ${r2} | fasta2fastqDummy.sh | pigz --fast --stdout > "${nametag}.q2.gz"
@@ -92,9 +93,8 @@ process fasta2mockFASTQ {
 
 process fastQC {
   tag {nametag}
-
   input:
-    set val(nametag), file("${nametag}.q1.gz"), file("${nametag}.q2.gz") from FASTQ 
+    set val(nametag), file("${nametag}.q1.gz"), file("${nametag}.q2.gz") from FASTQ
 
   output:
     file "*_fastqc.{zip,html}" into fastqc_results
@@ -102,35 +102,32 @@ process fastQC {
     """
     fastqc -q "${nametag}.q1.gz" "${nametag}.q2.gz"
     """
-
-
 }
 
-process multiQC {    
+process multiQC {
   publishDir "${params.outdir}/MultiQC", mode: 'copy'
 
-  input: 
+  input:
     file f from fastqc_results.collect()
-  
+
   output:
     file "*multiqc_report.html" into multiqc_report
-    file "*_data"
-    
+    file "*_data" into multiqc_data
+
     """
     pwd
     multiqc . -f
     """
 }
 
-process hisat2Index {  
+process hisat2Index {
   tag{name}
   input:
     set val(name), file(ref) from hisat2Refs
-  
+
   output:
     set val(name), file("hisat2db.*.ht2") into hisat2dbs
 
-    
     """
     hisat2-build ${ref} hisat2db -p 8
     """
@@ -143,10 +140,8 @@ process hisat2Align {
     set val(name), file(r1),file(r2) from hisat2reads
     set val(dbname), file("hisat2db.*.ht2") from hisat2dbs
 
-  output:    
+  output:
     set val(tag), file("${tag}.bam") into hisat2BAMs
-//    val tag into samname
-//    stdout sam into ssam
 
   script:
     tag = name+"_vs_"+dbname+".hisat2"
@@ -163,7 +158,7 @@ process kangaIndex {
 
   output:
     set val(name), file(kangadb) into kangadbs
-    
+
     """
     biokanga index \
     -i ${ref} \
@@ -192,22 +187,18 @@ process kangaAlign {
     --threads ${task.cpus} \
     -o "${tag}.bam" \
     --pemode 2 \
-    --substitutions 3 
+    --substitutions 3
     """
 }
-
 
 process extractStatsFromBAMs {
   tag {nametag}
   input: 
     set val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
-  
+
   output:
-    set val(nametag), file(statsFile) into statsFiles
-  
-//  exec:
-//    println "Placeholder for extracting stats from ${nametag}" 
-   
+    set val(nametag), file(statsFile) into statsFiles, statsFilesForFigures
+
   script:
     """
     echo -n "${nametag}\t" > statsFile
@@ -215,22 +206,34 @@ process extractStatsFromBAMs {
     """
 }
 
-
-//| awk -vOFS="\t" '{split($1,sim,"|");if(sim[4]==$3 && sim[5]==$4-1){count++}};END{print count,NR,count/NR}' >> statsFile
-
 process MOCK_generateFigures {
+  publishDir "${params.outdir}/figures/", mode: 'copy'
   tag {nametag}
   label "MOCK_PROCESS"
-  input: 
-    set val(nametag), file(statsFile) from statsFiles
-  
+  input:
+    set val(nametag), file(statsFile) from statsFilesForFigures
+
   output:
-    file figure into figures
-    
+    set file(metadata), file(figure) into figures
+
   script:
     """
     echo "${nametag}" > figure
+    echo "${nametag}" > metadata
     """
 }
 
+process MOCK_generateReport {
+  label "MOCK_PROCESS"
+  input: 
+    set file(metadata), file(figure) from figures.collect()
+    set val(nametag), file(statsFile) from statsFiles.collect()
+    file "*multiqc_report.html" from multiqc_report
+    file "*_data" from multiqc_data
+    file writeup
 
+    """
+    echo "do something"
+    """
+
+}
