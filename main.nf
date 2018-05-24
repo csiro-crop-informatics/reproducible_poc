@@ -1,8 +1,13 @@
 //READ SIMULATION PARAMS
-seqerrs = params.seqerrs
+seqerrs = params.seqerrs.toString().tokenize(",")
 nreadsarr = params.nreads.toString().tokenize(",")
+nrepeat = params.nrepeat
+//INPUT GENOME PARAMS
 url = params.url
 name = params.name
+
+
+//TODO add (conditional?) simulation of transcript reads using a feature file biokanga simreads --featfile 
 
 def helpMessage() {
     log.info"""
@@ -16,6 +21,7 @@ def helpMessage() {
     Default params:
     seqerrs    : ${params.seqerrs}
     nreads     : ${params.nreads} - this can be a comma-delimited set e.g. 100,20000,400
+    nrepeat   : ${params.nrepeat} 
     url        : ${params.url}
     name       : ${params.name}
     outdir     : ${params.outdir}
@@ -50,22 +56,26 @@ process kangaSimReads {
   input:
     set val(name), file(ref) from simReadsRefs
     each nreads from nreadsarr
-    
+    each seqerr from seqerrs
+    each rep from 1..nrepeat
+
   output:
     set val(nametag),file("r1.gz"),file("r2.gz") into kangaReads, hisat2reads, fa2fqreads //simReads 
 
   script:
-  nametag = name+"_"+nreads
-  """
-  biokanga simreads \
-  --pegen \
-  --seqerrs ${seqerrs} \
-  --in ${ref} \
-  --nreads ${nreads} \
-  --out r1 \
-  --outpe r2 \
-  && pigz --fast r1 r2
-  """
+    println(rep)
+    println(nrepeat)
+    nametag = nrepeat == 1 ? name+"_"+nreads : name+"_"+nreads+"_"+rep
+    """
+    biokanga simreads \
+    --pegen \
+    --seqerrs ${seqerr} \
+    --in ${ref} \
+    --nreads ${nreads} \
+    --out r1 \
+    --outpe r2 \
+    && pigz --fast r1 r2
+    """
 }
 
 process fasta2mockFASTQ {
@@ -189,12 +199,8 @@ process kangaAlign {
 }
 
 
-//allBAMs = Channel.create()
-//allBAMs.mix(kangaBAMs, hisat2BAMs)
-
-process MOCK_extractStatsFromBAMs {
+process extractStatsFromBAMs {
   tag {nametag}
-  label "MOCK_PROCESS"
   input: 
     set val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
   
@@ -206,10 +212,13 @@ process MOCK_extractStatsFromBAMs {
    
   script:
     """
-    echo "${nametag}" > statsFile
+    echo -n "${nametag}\t" > statsFile
+    samtools view ${nametag}.bam | extractStatsFromBAM.sh >> statsFile
     """
-  
 }
+
+
+//| awk -vOFS="\t" '{split($1,sim,"|");if(sim[4]==$3 && sim[5]==$4-1){count++}};END{print count,NR,count/NR}' >> statsFile
 
 process MOCK_generateFigures {
   tag {nametag}
