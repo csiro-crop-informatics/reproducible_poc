@@ -29,13 +29,13 @@ output:
     incremental: false
     css: reveal.css
     slide_level: 1 #default=2
-    self_contained: false
-    reveal_plugins: ["notes"]
+    self_contained: true
     reveal_options:
       slideNumber: true
       margin: 0.1
       width: 1280
       height: 800
+      preview_links: true
   slidy_presentation:
     font_adjustment: -1
   ioslides_presentation:
@@ -78,21 +78,24 @@ output:
 
 ----
 
-## [Nextflow](https://www.nextflow.io/)
+## [Nextflow](https://www.nextflow.io/) 
 
-### Promises 
+A Workflow management system which promises 
+
   * Portability
   * Scalability
   * Reproducibility
 
-### Features 
-  * Separation of pipeline logic from compute
-  * Syntax is a superset of Groovy
+Features 
+
+  * Separation of pipeline logic from compute environment definition(s)
+  * Syntax is a superset of Groovy, but
   * Polyglot
     * mixing scripting languages
   * Multiple _executors_
     * SGE, LSF, SLURM, PBS/Torque, NQSII HTCondor, Ignite, Kubernets, AWS Batch
 
+[https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)
 
 
 ----
@@ -100,6 +103,7 @@ output:
 ## Pipeline flow
 
 ```{bash, echo = FALSE}
+dot -Tpng -odoc/flowchart.png doc/flowchart.dot
 dot -Tpng -Gsize=9,7\! -Gdpi=100 -odoc/flowchart_small.png doc/flowchart.dot
 ```
 
@@ -156,7 +160,7 @@ cat conf/modules.config
 * Required containers are defined separately and explicitly for each process
 * Available on docker hub
   * Used both by `docker` and `singularity`
-  * Always specify version tag
+  * Always specify version tag (avoid `':latest'`)
 
 ```{bash, comment=''}
 cat conf/containers.config
@@ -168,7 +172,7 @@ cat conf/containers.config
 
 ![Tool-chain](https://d33wubrfki0l68.cloudfront.net/61d189fd9cdf955058415d3e1b28dd60e1bd7c9b/9791d/images/rmarkdownflow.png)
 
-Some of the supported output formats:
+### Some of the supported output formats:
 
 * HTML* documents and slide-shows using 
   * Slidy, ioslides, **reveal.js**
@@ -183,15 +187,25 @@ Some of the supported output formats:
 ## This presentation
 
 * Dependencies
-  * R
-  * Pandoc
-  * `rmarkdown` R package
-  * `revealjs` R package
-* Use RStudio or a simple `RScript` from the command line
+  * R, Pandoc, `rmarkdown`, `revealjs`
+* Use R, RStudio or a simple `RScript` from the command line
+
+```{bash, eval = FALSE}
+./render.R show.Rmd
+```
 
 ```{bash, comment='', echo = FALSE}
 head -15 render.R
 ```
+
+----
+
+## Report generation
+
+* results of tested tools are compared to ground-trouth (original locations of simulated reads)
+* 
+
+
 
 ----
 
@@ -200,7 +214,12 @@ head -15 render.R
 * More systematic evaluation of BioKanga alignment module vs other tools
   * At default settings
   * Exploration of parameter space, optimisation
-* Refinement of document generation
-  * R Markdown not as flexible as advertised
-    * Could the generation of report, slides in various formats 
+* Refinement of document generation, as R Markdown rendering not as flexible as hoped
+  * Generation of ouptut in different formats somewhat limited
+  * For more complex content where pure (R) Markdown is insuffcient have to decide on either 
+    * (R) Markdown with LaTeX 
+    * (R) Markdown with HTML
 * Evaluation of Nextflow against Snakemake
+
+
+
