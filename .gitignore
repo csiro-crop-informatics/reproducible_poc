@@ -4,3 +4,4 @@ work/
 .nextflow*
 singularity-images/
 conf/cloud.config
+doc/flowchart.???.?
