@@ -255,7 +255,7 @@ process MOCK_generateFigures {
 //    """
 }
 
-process MOCK_generateReport {
+process MOCK_generateReportMatter {
 //  tag {tag}
   label "MOCK_PROCESS"
   input:
@@ -265,7 +265,7 @@ process MOCK_generateReport {
     //set val(nametag), file(statsFile) from statsFiles.collate(2)
     file "*multiqc_report.html" from multiqc_report
     file "*_data" from multiqc_data
-    file writeup
+    file docheader
 
   script:
     """

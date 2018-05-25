@@ -56,11 +56,11 @@ p10 [label="multiQC"];
 p9 -> p10;
 
 p10 [label="multiQC"];
-p23 [label="MOCK_generateReport"];
+p23 [label="MOCK_generateReportMatter"];
 p10 -> p23 [label="multiqc_report"];
 
 p10 [label="multiQC"];
-p23 [label="MOCK_generateReport"];
+p23 [label="MOCK_generateReportMatter"];
 p10 -> p23 [label="multiqc_data"];
 
 p11 [label="hisat2Index"];
@@ -104,7 +104,7 @@ p20 [label="MOCK_generateFigures"];
 p19 -> p20 [label="allStatsForFigs"];
 
 p19 [label="combineStats"];
-p23 [label="MOCK_generateReport"];
+p23 [label="MOCK_generateReportMatter"];
 p19 -> p23 [label="allStatsForDoc"];
 
 p20 [label="MOCK_generateFigures"];
@@ -112,11 +112,11 @@ p21 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
 p20 -> p21 [label="figures"];
 
 p21 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="collect"];
-p23 [label="MOCK_generateReport"];
+p23 [label="MOCK_generateReportMatter"];
 p21 -> p23;
 
 p22 [shape=point,label="",fixedsize=true,width=0.1];
-p23 [label="MOCK_generateReport"];
+p23 [label="MOCK_generateReportMatter"];
 p22 -> p23 [label="writeup"];
 
 }
