@@ -145,7 +145,7 @@ process hisat2Align {
 
   script:
     tag = name+"_vs_"+dbname+".hisat2"
-    longtag = deepCopy(longtag0)
+    longtag = longtag0.clone() //deepCopy(longtag0)
     longtag.ref = dbname
     longtag.aligner = "HISAT2"
     """
@@ -181,7 +181,7 @@ process kangaAlign {
 
   script:
     tag = name+"_vs_"+dbname+".biokanga"
-    longtag = deepCopy(longtag0) //otherwise moidfying orginal map, triggering re-runs with -resume
+    longtag = longtag0.clone() //deepCopy(longtag0) //otherwise moidfying orginal map, triggering re-runs with -resume
     longtag.ref = dbname
     longtag.aligner = "BioKanga"
     """
@@ -197,15 +197,15 @@ process kangaAlign {
 
 process extractStatsFromBAMs {
   tag {longtag}
+//  cache 'deep'
   input: 
-    set val(longtag0), val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
+    set val(longtag), val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
 
   output:
     file statsFile into statsFiles
     val longtag into longtags
 
   script:
-    longtag = deepCopy(longtag0)
     statsPrefix = longtag.values().join("\t")+"\t"
     """
     echo -ne "${statsPrefix}" > statsFile
@@ -228,9 +228,6 @@ process combineStats {
     """
       cat <(echo -e "${statsHeader}") statsFile* >> allStats
     """
-//  """
-//    
-//  """
 }
 
 process MOCK_generateFigures {
@@ -270,19 +267,12 @@ process MOCK_generateReportMatter {
 
   script:
     """
-    echo "---" > "${writeup}"
-    cat "${docheader}" >> "${writeup}"
-    echo -e "---\n" >> "${writeup}"
-    echo "# Stats\n" >> "${writeup}"
-    """
     
+    """
+//    echo "---" > "${writeup}"
+//    cat "${docheader}" >> "${writeup}"
+//    echo -e "---\n" >> "${writeup}"
+//    echo "# Stats\n" >> "${writeup}"
+//    """
 }
 
-def deepCopy(orig) {
-     bos = new ByteArrayOutputStream()
-     oos = new ObjectOutputStream(bos)
-     oos.writeObject(orig); oos.flush()
-     bin = new ByteArrayInputStream(bos.toByteArray())
-     ois = new ObjectInputStream(bin)
-     return ois.readObject()
-}
