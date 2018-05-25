@@ -69,6 +69,7 @@ output:
 
 * In place
   * open source and version control from day 1
+    * [https://github.com/csiro-crop-informatics/reproducible_poc](https://github.com/csiro-crop-informatics/reproducible_poc)
   * focus on design (not immediate result)
   * workflow managment
   * containers 
@@ -103,7 +104,9 @@ Features
   * Separation of pipeline logic from compute environment definition(s)
   * Syntax is a superset of Groovy, but
   * Polyglot
-    * mixing scripting languages
+    * mixing scripting languages, as long as interpreter available on system
+    
+    
   * Multiple _executors_
     * SGE, LSF, SLURM, PBS/Torque, NQSII HTCondor, Ignite, Kubernets, AWS Batch
 
@@ -199,7 +202,7 @@ cat conf/containers.config
 
 ----
 
-## This presentation
+## This slides
 
 * Dependencies
   * R, Pandoc, `rmarkdown`, `revealjs`
@@ -227,8 +230,11 @@ head -15 render.R
 
 ```{R}
 dt <- read.table("results/stats/allStats", header=TRUE, sep="\t")
-kable(head(dt,n=10)) %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+#kable(dt[with(dt, order(MatchRate, decreasing=TRUE)), ]) %>% 
+kable(dt) %>% 
+scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
+#kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) #%>%
+  
 ```
 
 ---
