@@ -137,7 +137,7 @@ process hisat2Index {
 process hisat2Align {
   tag {longtag}
   input:
-    set val(longtag), val(name), file(r1),file(r2) from hisat2reads
+    set val(longtag0), val(name), file(r1),file(r2) from hisat2reads
     set val(dbname), file("hisat2db.*.ht2") from hisat2dbs
 
   output:
@@ -145,7 +145,7 @@ process hisat2Align {
 
   script:
     tag = name+"_vs_"+dbname+".hisat2"
-    longtag = deepCopy(longtag)
+    longtag = deepCopy(longtag0)
     longtag.ref = dbname
     longtag.aligner = "HISAT2"
     """
@@ -173,7 +173,7 @@ process kangaIndex {
 process kangaAlign {
   tag {longtag}
   input:
-    set val(longtag), val(name),file(r1),file(r2) from kangaReads
+    set val(longtag0), val(name),file(r1),file(r2) from kangaReads
     set val(dbname),file(kangadb) from kangadbs
 
   output:
@@ -181,7 +181,7 @@ process kangaAlign {
 
   script:
     tag = name+"_vs_"+dbname+".biokanga"
-    longtag = deepCopy(longtag) //otherwise moidfying orginal map, triggering re-runs with -resume
+    longtag = deepCopy(longtag0) //otherwise moidfying orginal map, triggering re-runs with -resume
     longtag.ref = dbname
     longtag.aligner = "BioKanga"
     """
@@ -198,13 +198,14 @@ process kangaAlign {
 process extractStatsFromBAMs {
   tag {longtag}
   input: 
-    set val(longtag), val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
+    set val(longtag0), val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
 
   output:
     file statsFile into statsFiles
     val longtag into longtags
 
   script:
+    longtag = deepCopy(longtag0)
     statsPrefix = longtag.values().join("\t")+"\t"
     """
     echo -ne "${statsPrefix}" > statsFile
