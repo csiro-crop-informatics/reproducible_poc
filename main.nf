@@ -6,7 +6,7 @@ nrepeat = params.nrepeat
 url = params.url
 name = params.name
 writeup = file(params.writeup)
-
+docheader = file(params.docheader)
 
 //TODO add (conditional?) simulation of transcript reads using a feature file biokanga simreads --featfile 
 
@@ -65,7 +65,7 @@ process kangaSimReads {
     set val(longtag), val(nametag),file("r1.gz"),file("r2.gz") into kangaReads, hisat2reads, fa2fqreads //simReads
 
   script:
-    nametag = nrepeat == 1 ? name+"_"+nreads : name+"_"+nreads+"_"+rep
+    nametag = name+"_"+nreads+"_"+seqerr+"_"+rep
 //    longtag = "name="+name+" nreads="+nreads+" rep="+rep
     longtag = ["name":name, "nreads":nreads, "seqerr":seqerr, "rep":rep]
     """
@@ -192,7 +192,6 @@ process kangaAlign {
     --threads ${task.cpus} \
     -o "${tag}.bam" \
     --pemode 2 \
-    --substitutions 3
     """
 }
 
@@ -269,10 +268,13 @@ process MOCK_generateReport {
     file writeup
 
   script:
-
+    """
+    echo "---" > "${writeup}"
+    cat "${docheader}" >> "${writeup}"
+    echo -e "---\n" >> "${writeup}"
+    echo "# Stats\n" >> "${writeup}"
     """
     
-    """
 }
 
 def deepCopy(orig) {

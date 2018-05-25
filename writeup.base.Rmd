@@ -1,0 +1,37 @@
+---
+title: "A reproducible and reusable publication and analysis workflow"
+author:
+- Rad Suchecki
+- Nathan Watson-Haigh
+- Stuart Stephen
+- Alex Whan
+#subtitle: "Subtitle"
+date: "`r format(Sys.time(), '%A, %d %B, %Y')`"
+#tags: [nothing, nothingness]
+output:
+  #pdf_document:
+    #default
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    theme: yeti
+    highlight: tango
+---
+
+# Header 1
+
+
+
+```{R}
+library(knitr)
+library(kableExtra)
+```
+
+# Stats
+
+```{R}
+dt <- read.table("results/stats/allStats", header=TRUE, sep="\t")
+kable(dt) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```

@@ -41,7 +41,6 @@ output:
   ioslides_presentation:
     widescreen: true
     transition: faster
-
 ---
 
 
@@ -222,8 +221,17 @@ head -15 render.R
 * 
 
 
-
 ----
+
+## Tables and figures dynamically generated from collected results
+
+```{R}
+dt <- read.table("results/stats/allStats", header=TRUE, sep="\t")
+kable(head(dt)) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+```
+
+---
 
 ## Further Work
 
