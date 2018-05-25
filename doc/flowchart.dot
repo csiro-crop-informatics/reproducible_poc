@@ -117,6 +117,6 @@ p21 -> p23;
 
 p22 [shape=point,label="",fixedsize=true,width=0.1];
 p23 [label="MOCK_generateReportMatter"];
-p22 -> p23 [label="writeup"];
+p22 -> p23 [label="docheader"];
 
 }
