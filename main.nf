@@ -54,7 +54,7 @@ process fetchRef {
 }
 
 process kangaSimReads {
-  tag {nametag}
+  tag {longtag}
   input:
     set val(name), file(ref) from simReadsRefs
     each nreads from nreadsarr
@@ -62,10 +62,12 @@ process kangaSimReads {
     each rep from 1..nrepeat
 
   output:
-    set val(nametag),file("r1.gz"),file("r2.gz") into kangaReads, hisat2reads, fa2fqreads //simReads
+    set val(longtag), val(nametag),file("r1.gz"),file("r2.gz") into kangaReads, hisat2reads, fa2fqreads //simReads
 
   script:
     nametag = nrepeat == 1 ? name+"_"+nreads : name+"_"+nreads+"_"+rep
+//    longtag = "name="+name+" nreads="+nreads+" rep="+rep
+    longtag = ["name":name, "nreads":nreads, "seqerr":seqerr, "rep":rep]
     """
     biokanga simreads \
     --pegen \
@@ -79,9 +81,9 @@ process kangaSimReads {
 }
 
 process fasta2mockFASTQ {
-  tag {nametag}
+  tag {longtag}
   input:
-    set val(nametag),file(r1),file(r2) from fa2fqreads
+    set val(longtag),val(nametag),file(r1),file(r2) from fa2fqreads
 
   output:
     set val(nametag), file ("*.q1.gz"), file("*.q2.gz") into FASTQ
@@ -133,16 +135,19 @@ process hisat2Index {
 }
 
 process hisat2Align {
-  tag {name+" vs "+dbname}
+  tag {longtag}
   input:
-    set val(name), file(r1),file(r2) from hisat2reads
+    set val(longtag), val(name), file(r1),file(r2) from hisat2reads
     set val(dbname), file("hisat2db.*.ht2") from hisat2dbs
 
   output:
-    set val(tag), file("${tag}.bam") into hisat2BAMs
+    set val(longtag), val(tag), file("${tag}.bam") into hisat2BAMs
 
   script:
     tag = name+"_vs_"+dbname+".hisat2"
+    longtag = deepCopy(longtag)
+    longtag.ref = dbname
+    longtag.aligner = "HISAT2"
     """
     hisat2 -x hisat2db -f -1 ${r1} -2 ${r2} \
     | samtools view -bS -F 4 -F 8 -F 256 - > ${tag}.bam
@@ -166,16 +171,19 @@ process kangaIndex {
 }
 
 process kangaAlign {
-  tag {name+" vs "+dbname}
+  tag {longtag}
   input:
-    set val(name),file(r1),file(r2) from kangaReads
+    set val(longtag), val(name),file(r1),file(r2) from kangaReads
     set val(dbname),file(kangadb) from kangadbs
 
   output:
-    set val(tag), file("${tag}.bam") into kangaBAMs
+    set val(longtag), val(tag), file("${tag}.bam") into kangaBAMs
 
   script:
     tag = name+"_vs_"+dbname+".biokanga"
+    longtag = deepCopy(longtag) //otherwise moidfying orginal map, triggering re-runs with -resume
+    longtag.ref = dbname
+    longtag.aligner = "BioKanga"
     """
     biokanga align \
     -i ${r1} \
@@ -189,49 +197,89 @@ process kangaAlign {
 }
 
 process extractStatsFromBAMs {
-  tag {nametag}
+  tag {longtag}
   input: 
-    set val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
+    set val(longtag), val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
 
   output:
-    set val(nametag), file(statsFile) into statsFiles, statsFilesForFigures
+    file statsFile into statsFiles
+    val longtag into longtags
 
   script:
+    statsPrefix = longtag.values().join("\t")+"\t"
     """
-    echo -n "${nametag}\t" > statsFile
+    echo -ne "${statsPrefix}" > statsFile
     samtools view ${nametag}.bam | extractStatsFromBAM.sh >> statsFile
     """
 }
 
+process combineStats {
+
+  input:
+    file("statsFile*") from statsFiles.collect()
+    val longtag from longtags.first()
+    
+  output:
+    file allStats into allStatsForFigs, allStatsForDoc
+    
+  script:
+//  allStats = file('allStats')
+  statsHeader = longtag.keySet().join("\t")+"\t"+"Matches\tAlignments\tMatchRate"
+    """
+      cat <(echo -e "${statsHeader}") statsFile* >> allStats
+    """
+//  """
+//    
+//  """
+}
+
 process MOCK_generateFigures {
-  tag {nametag}
+//  tag {nametag}
   label "MOCK_PROCESS"
   input:
-    set val(nametag), file(statsFile) from statsFilesForFigures
+    file allStats from allStatsForFigs
 
   output:
-    set file(metadata), file(figure) into figures
+    file("*.figure") into figures
+    
+  script: 
+  """
+    cat allStats > one.figure
+    cat allStats > another.figure
+  """
+//    set file("*${nametag}.metadata"), file("*${nametag}.figure") into figures
 
-  script:
-    """
-    echo "${nametag}" > figure
-    echo "${nametag}" > metadata
-    """
+//  script:
+//    """
+//    echo "${nametag}" > "${nametag}.metadata"
+//    echo "${nametag}" > "${nametag}.figure"
+//    """
 }
 
 process MOCK_generateReport {
+//  tag {tag}
   label "MOCK_PROCESS"
-  input: 
-    set file(metadata), file(figure) from figures.collect()
-    set val(nametag), file(statsFile) from statsFiles.collect()
+  input:
+    file "*figure" from figures.collect()
+    file allStats from allStatsForDoc
+    //set file(metadata), file(figure) from figures.collate(2)
+    //set val(nametag), file(statsFile) from statsFiles.collate(2)
     file "*multiqc_report.html" from multiqc_report
     file "*_data" from multiqc_data
     file writeup
 
   script:
-    println("Figures.size = "+figures.length())
-    """
-    echo "do something"
-    """
 
+    """
+    
+    """
+}
+
+def deepCopy(orig) {
+     bos = new ByteArrayOutputStream()
+     oos = new ObjectOutputStream(bos)
+     oos.writeObject(orig); oos.flush()
+     bin = new ByteArrayInputStream(bos.toByteArray())
+     ois = new ObjectInputStream(bin)
+     return ois.readObject()
 }
