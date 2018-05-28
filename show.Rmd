@@ -43,15 +43,7 @@ output:
     transition: faster
 ---
 
-
-
-```{r include = FALSE}
-# <mark>Towards</mark> a reproducible and reusable publication and analysis workflow
-#knitr::opts_chunk$set(echo = FALSE) #resets defaults
-#library(viridis) #load required libs here
-```
-
-## Reproducibility in science: why?
+## Reproducible manuscript - why?
 
 <div class="column-left">
 
@@ -66,18 +58,19 @@ output:
 >   * Widely reported inconsistencies between results and the methodology reported
 > * To promote computational reproducibility
 >   * Other people (and you!) can take your data and get the same numbers that are in your paper
+>   * Document must specify where ALL the numbers come from
 >   * Otherwise numbers hard to recover even in absence of errors
->   * Document to specify where ALL the numbers come from
 > * To create documents which can be revised easily
 >   * New data, updated software or requests from reviewers can be incorporated much more easily
 
-<small> [https://github.com/libscie/rmarkdown-workshop](https://github.com/libscie/rmarkdown-workshop) </small>
+<!--[inspiration](https://github.com/libscie/rmarkdown-workshop)-->
 
 </div>
 
 ----
 
-## Reproducibility in data science
+
+## Ingredients for reproducibility in data science
 
 * data
 
@@ -107,24 +100,30 @@ sessionInfo()
 - [https://github.com/csiro-crop-informatics/biokanga](https://github.com/csiro-crop-informatics/biokanga)
 
 
-
-### Aim
+### Aims
 
   * evaluation of BioKanga's sequence alignment module vs state-of-the-art tools
   * turn-key reproducibility
   * reusability
 
+<div class="column-right">
+![](https://openclipart.org/download/192541/pushthebutton.svg){width=33%}
+</div>
+
 ----
 
 ## Means
 
-* In place
-  * open source and version control from day 1
-    * [https://github.com/csiro-crop-informatics/reproducible_poc](https://github.com/csiro-crop-informatics/reproducible_poc)
-  * focus on design (not immediate result)
-  * workflow managment
-  * containers
-* Planned
+### In place 
+
+* open source and version control from day 1
+  * [https://github.com/csiro-crop-informatics/reproducible_poc](https://github.com/csiro-crop-informatics/reproducible_poc)
+* focus on design (not immediate result)
+* workflow managment
+* containers
+
+### Planned
+
   * CI
   * automated builds 
 
@@ -186,15 +185,14 @@ cat main.nf
 
 ## Compute profiles 
 
-* __Implemented:__
-  - `standard` (i.e. local/interactive assuming all software available)
-  - `slurm`
-  - `modules`
-  - `docker`
-  - `singularity`
-  - `ec2`
+### Implemented
 
-
+- `standard` (i.e. local/interactive assuming all software available)
+- `slurm`
+- `modules`
+- `docker`
+- `singularity`
+- `ec2`
 
 ```{bash, eval = FALSE}
 # some of the profiles can, and others are intended to be used in concert, e.g. 
@@ -203,7 +201,9 @@ nextflow run main.nf -profile slurm,modules
 nextflow run main.nf -profile slurm,singularity,singularitymodule
 ```
 
-* __Upcoming:__ `k8s`, `awsbatch`
+### Upcoming:
+
+* `k8s`, `awsbatch`
 
 ----
 
@@ -255,6 +255,7 @@ cat conf/containers.config
 * Dependencies
   * R, Pandoc, `rmarkdown`, `revealjs`
 * Use R, RStudio or a simple `RScript` from the command line
+
 
 ```{bash, eval = FALSE}
 ./render.R show.Rmd "revealjs::revealjs_presentation"
@@ -340,6 +341,21 @@ scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
   * `make` and `LaTeX`
 
 
+<!--<link href="scripts/highlightjs/styles/github-gist.css" rel="stylesheet" />-->
+<!--<script src="scripts/highlightjs/highlight.pack.js"></script>-->
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+
+<script>
+function highlightCode() {
+    var pres = document.querySelectorAll("pre>code");
+    for (var i = 0; i < pres.length; i++) {
+        hljs.highlightBlock(pres[i]);
+    }
+}
+highlightCode();
+</script>
 
 ----
 
