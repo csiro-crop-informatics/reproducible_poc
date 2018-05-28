@@ -51,8 +51,57 @@ output:
 #library(viridis) #load required libs here
 ```
 
+## Reproducibility in science: why?
+
+<div class="column-left">
+
+[![https://xkcd.com/242/](https://imgs.xkcd.com/comics/the_difference.png){ width=80% }](https://xkcd.com/242/)
+
+<small> [https://xkcd.com/242/](https://xkcd.com/242/) </small>
+</div>
+
+<div class="column-right">
+
+> * To avoid errors. 
+>   * Widely reported inconsistencies between results and the methodology reported.
+> * To promote computational reproducibility. 
+>   * Other people (and you!) can take your data and get the same numbers that are in your paper.
+>   * Otherwise numbers hard to recover even in absence of errors.
+>   * Document to specify where ALL the numbers come from.
+> * To create documents which can be revised easily. 
+>   * New data, updated software or requests from reviewers can be incorporated much more easily.
+
+<small>
+Credit due: [https://github.com/libscie/rmarkdown-workshop](https://github.com/libscie/rmarkdown-workshop) 
+</small>
+
+</div>
+
+----
+
+## Reproducibility in data science
+
+* data
+
+```{bash, comment='', echo=FALSE}
+#curl -s ftp://ftp.ensemblgenomes.org/pub/plants/release-38/fasta/arabidopsis_thaliana/dna/Arabidopsis_thaliana.TAIR10.dna.toplevel.fa.gz | gunzip --stdout | head
+head data/At.head.fa
+```
+
+* code
+
+```{bash, comment='', echo=FALSE}
+head bin/extractStatsFromBAM.sh
+```
+
+* compute environment 
+
+```{R, comment='', echo=FALSE}
+sessionInfo()
+```
 
 
+----
 
 ## BioKanga {incremental=false}
 
@@ -86,20 +135,20 @@ output:
 - we developed a modular workflow using ~~two popular automation frameworks, Snakemake and~~ [Nextflow](https://www.nextflow.io/)
 
 - Individual tasks are executed in Cloud or HPC environment using dedicated, ~~lightweight~~ (Docker/Singularity) containers.
-- Raw data is acquired from a public sources, processed and analysed.
+- Raw data is acquired from public sources, processed and analysed.
 - Final document including dynamically generated figures and tables is compiled from R Markdown <strike> or LaTeX/knitr </strike>.
 
 ----
 
 ## [Nextflow](https://www.nextflow.io/) 
 
-A Workflow management system which promises 
+### A Workflow management system which promises 
 
   * Portability
   * Scalability
   * Reproducibility
 
-Features 
+### Features 
 
   * Separation of pipeline logic from compute environment definition(s)
   * Syntax is a superset of Groovy, but
@@ -110,7 +159,7 @@ Features
   * Multiple _executors_
     * SGE, LSF, SLURM, PBS/Torque, NQSII HTCondor, Ignite, Kubernets, AWS Batch
 
-[https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)
+<small>[https://www.nature.com/articles/nbt.3820/](https://www.nature.com/articles/nbt.3820)</small>
 
 
 ----
@@ -209,20 +258,25 @@ cat conf/containers.config
 * Use R, RStudio or a simple `RScript` from the command line
 
 ```{bash, eval = FALSE}
-./render.R show.Rmd
+./render.R show.Rmd "revealjs::revealjs_presentation"
 ```
 
 ```{bash, comment='', echo = FALSE}
-head -15 render.R
+cat render.R
 ```
 
 ----
 
 ## Report generation
 
-* results of tested tools are compared to ground-trouth (original locations of simulated reads)
-* 
-
+* ### Design conundrum
+  * ~~Pipeline to render doc~~
+  * ~~Doc rendering to execute pipeline~~
+  * Run pipeline, then render doc
+* ### Detail 
+  * results of tested tools are compared to ground-trouth (original locations of simulated reads)
+* ### Workflow introspection
+  *
 
 ----
 
@@ -233,13 +287,11 @@ dt <- read.table("results/stats/allStats", header=TRUE, sep="\t")
 #kable(dt[with(dt, order(MatchRate, decreasing=TRUE)), ]) %>% 
 kable(dt) %>% 
 scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
-#kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive")) #%>%
-  
 ```
 
 ---
 
-## Further Work
+## Further Work (I)
 
 * More systematic evaluation of BioKanga alignment module vs other tools
   * At default settings
@@ -250,5 +302,16 @@ scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
     * (R)Markdown with HTML
 * Evaluation of Nextflow against Snakemake
 
+
+----
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">4 pages of this. Images pasted into a word document! <a href="https://t.co/CkVpLutZZV">pic.twitter.com/CkVpLutZZV</a></p>&mdash; Paul Gardner (@ppgardne) <a href="https://twitter.com/ppgardne/status/1000582103141007361?ref_src=twsrc%5Etfw">May 27, 2018</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">The &quot;Journal of Irreproducible Results&quot; was a joke, but actually that&#39;s what most journals really are. <a href="http://t.co/TiLh2f5JZH">http://t.co/TiLh2f5JZH</a></p>&mdash; Sean Carroll (@seanmcarroll) <a href="https://twitter.com/seanmcarroll/status/424596260893364225?ref_src=twsrc%5Etfw">January 18, 2014</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+----
 
 
