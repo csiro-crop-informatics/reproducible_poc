@@ -62,18 +62,16 @@ output:
 
 <div class="column-right">
 
-> * To avoid errors. 
->   * Widely reported inconsistencies between results and the methodology reported.
-> * To promote computational reproducibility. 
->   * Other people (and you!) can take your data and get the same numbers that are in your paper.
->   * Otherwise numbers hard to recover even in absence of errors.
->   * Document to specify where ALL the numbers come from.
-> * To create documents which can be revised easily. 
->   * New data, updated software or requests from reviewers can be incorporated much more easily.
+> * To avoid errors
+>   * Widely reported inconsistencies between results and the methodology reported
+> * To promote computational reproducibility
+>   * Other people (and you!) can take your data and get the same numbers that are in your paper
+>   * Otherwise numbers hard to recover even in absence of errors
+>   * Document to specify where ALL the numbers come from
+> * To create documents which can be revised easily
+>   * New data, updated software or requests from reviewers can be incorporated much more easily
 
-<small>
-Credit due: [https://github.com/libscie/rmarkdown-workshop](https://github.com/libscie/rmarkdown-workshop) 
-</small>
+<small> [https://github.com/libscie/rmarkdown-workshop](https://github.com/libscie/rmarkdown-workshop) </small>
 
 </div>
 
@@ -105,12 +103,14 @@ sessionInfo()
 
 ## BioKanga {incremental=false}
 
-- A suite of bioinformatics tools developed at CSIRO.
+- A suite of bioinformatics tools developed at CSIRO
 - [https://github.com/csiro-crop-informatics/biokanga](https://github.com/csiro-crop-informatics/biokanga)
 
-- Aim:
+### Aim
+
   * evaluation of BioKanga's sequence alignment module vs state-of-the-art tools
   * turn-key reproducibility
+  * reusability
 
 ----
 
@@ -121,13 +121,10 @@ sessionInfo()
     * [https://github.com/csiro-crop-informatics/reproducible_poc](https://github.com/csiro-crop-informatics/reproducible_poc)
   * focus on design (not immediate result)
   * workflow managment
-  * containers 
-  * 
+  * containers
 * Planned
   * CI
   * automated builds 
-
-
 
 ----
 
@@ -251,7 +248,7 @@ cat conf/containers.config
 
 ----
 
-## This slides
+## [These slides](https://github.com/csiro-crop-informatics/reproducible_poc/blob/develop/show.Rmd)
 
 * Dependencies
   * R, Pandoc, `rmarkdown`, `revealjs`
@@ -275,8 +272,8 @@ cat render.R
   * Run pipeline, then render doc
 * ### Detail 
   * results of tested tools are compared to ground-trouth (original locations of simulated reads)
-* ### Workflow introspection
-  *
+* ### Workflow introspection 
+  * Nextflow offers detailed execution [reports](https://rsuchecki.github.io/reproducible.github.io/report.html) and [timelines](https://rsuchecki.github.io/reproducible.github.io/timeline.html), which could be incorporated or linked to in the generated report/manuscript
 
 ----
 
@@ -289,28 +286,58 @@ kable(dt) %>%
 scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
 ```
 
----
+----
 
 ## Further Work (I)
+
+### Document generation refinement 
+
+* R Markdown rendering not as flexible as hoped
+* Generation of ouptut in different formats somewhat limited, for more complex content where pure (R)Markdown is insuffcient have to decide on either 
+  * (R)Markdown with LaTeX 
+  * (R)Markdown with HTML
+
+### Workflow 
+
+* Evaluation of Nextflow against Snakemake
+* Tagged containers for 
+  * each release of the pipeline
+  * submitted/revised/final publication
+
+----
+
+## Further Work (II)
 
 * More systematic evaluation of BioKanga alignment module vs other tools
   * At default settings
   * Exploration of parameter space, optimisation
-* Refinement of document generation, as R Markdown rendering not as flexible as hoped
-  * Generation of ouptut in different formats somewhat limited, for more complex content where pure (R)Markdown is insuffcient have to decide on either 
-    * (R)Markdown with LaTeX 
-    * (R)Markdown with HTML
-* Evaluation of Nextflow against Snakemake
+  * More alignment tools to be included
 
 
 ----
 
+## :-(
+
+<div class="column-left">
+
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">4 pages of this. Images pasted into a word document! <a href="https://t.co/CkVpLutZZV">pic.twitter.com/CkVpLutZZV</a></p>&mdash; Paul Gardner (@ppgardne) <a href="https://twitter.com/ppgardne/status/1000582103141007361?ref_src=twsrc%5Etfw">May 27, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
+</div>
+
+<div class="column-right">
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">The &quot;Journal of Irreproducible Results&quot; was a joke, but actually that&#39;s what most journals really are. <a href="http://t.co/TiLh2f5JZH">http://t.co/TiLh2f5JZH</a></p>&mdash; Sean Carroll (@seanmcarroll) <a href="https://twitter.com/seanmcarroll/status/424596260893364225?ref_src=twsrc%5Etfw">January 18, 2014</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+</div>
+
+## Interesting work out there
+
+* [https://gitlab.com/makhlaghi/reproducible-paper](https://gitlab.com/makhlaghi/reproducible-paper)
+  * `make` and `LaTeX`
+
+
 
 ----
 
