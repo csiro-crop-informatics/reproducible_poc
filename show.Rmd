@@ -6,7 +6,7 @@ author:
 - Stuart Stephen
 - Alex Whan
 #subtitle: "Subtitle"
-date: "`r format(Sys.time(), '%A, %d %B, %Y')`"
+date: "<center> `r format(Sys.time(), '%A, %d %B, %Y')` </center>"
 #tags: [nothing, nothingness]
 output:
   #pdf_document:
@@ -107,34 +107,38 @@ sessionInfo()
   * re-usability
 
 <div class="column-right">
-![](https://openclipart.org/download/192541/pushthebutton.svg){width=33%}
+<!--![](https://openclipart.org/download/192541/pushthebutton.svg){width=33%}-->
+![](figs/pushthebutton.svg){width=33%}
 </div>
 
 ----
 
 ## Means
 
-### In place 
-
 * open source and version control from day 1
   * [https://github.com/csiro-crop-informatics/reproducible_poc](https://github.com/csiro-crop-informatics/reproducible_poc)
-* focus on design (not immediate result)
+* focus on design, not immediate result
 * workflow management
 * containers
 
+### Ongoing
+
+* automated manuscript content generation
+  * tables, figures... not AI for writing text
+
 ### Planned
 
-  * CO
+  * CI
   * automated builds 
 
 ----
 
-## Modular workflow
-- we developed a modular workflow using ~~two popular automation frameworks, Snakemake and~~ [Nextflow](https://www.nextflow.io/)
+## Plans vs reality
 
-- Individual tasks are executed in Cloud or HPC environment using dedicated, ~~lightweight~~ (Docker/Singularity) containers.
-- Raw data is acquired from public sources, processed and analysed.
-- Final document including dynamically generated figures and tables is compiled from R Markdown <strike> or LaTeX/knitr </strike>.
+- we have developed a modular workflow using ~~two popular automation frameworks, Snakemake and~~ [Nextflow](https://www.nextflow.io/)
+- Individual tasks are executed in Cloud or HPC environment using dedicated, ~~lightweight~~ (Docker/Singularity) containers
+- Raw data is acquired from public sources, processed and analysed
+- Final document including dynamically generated figures and tables is compiled from R Markdown <strike> or LaTeX/knitr </strike>  (minimal content at the moment, but works in principle)
 
 ----
 
@@ -210,20 +214,19 @@ nextflow run main.nf -profile slurm,singularity,singularitymodule
 
 ## Modules
 
-* Required modules are defined separately and explicitly for each process
+* Required modules are defined separately and explicitly for each process (or associated with labels)
 
 ```{bash, comment=''}
 cat conf/modules.config
 ```
 
 * Unfortunately, these are compute environment specific
-* On the up-side - updating these should be all that is required to run the pipeline on a different SLURM cluster
 
 ----
 
 ## Containers
 
-* Required containers are defined separately and explicitly for each process
+* Required containers are defined separately and explicitly for each process (or associated with labels)
 * Available on docker hub
   * Used both by `docker` and `singularity`
   * Always specify version tag (avoid `':latest'`)
@@ -252,9 +255,10 @@ cat conf/containers.config
 
 ## [These slides](https://github.com/csiro-crop-informatics/reproducible_poc/blob/develop/show.Rmd)
 
-* Dependencies
+* Source: [show.Rmd](show.Rmd)
+* Tools and packages:
   * R, Pandoc, `rmarkdown`, `revealjs`, `kableExtra`
-* Use R, RStudio or a simple `RScript` from the command line
+* Use R, RStudio or a simple `RScript` to render from the command line
 
 
 ```{bash, eval = FALSE}
@@ -265,16 +269,19 @@ cat conf/containers.config
 cat render.R
 ```
 
+* Output: [https://rsuchecki.github.io/reproducible.github.io/show.html](https://rsuchecki.github.io/reproducible.github.io/show.html)
+
 ----
 
 ## Report generation
 
 * ### Design conundrum
-  * ~~Pipeline to render doc~~
-  * ~~Doc rendering to execute pipeline~~
-  * Run pipeline, then render doc
+  * ~~Pipeline to render the document~~
+  * ~~Document rendering to execute pipeline~~
+  * Run pipeline, then render the document
 * ### Detail 
-  * results of tested tools are compared to ground truth (original locations of simulated reads)
+  * output from the tested tools evaluated against ground truth
+  * speed benchmarking
 * ### Workflow introspection 
   * Nextflow offers detailed execution [reports](https://rsuchecki.github.io/reproducible.github.io/report.html) and [timelines](https://rsuchecki.github.io/reproducible.github.io/timeline.html), which could be incorporated or linked to in the generated report/manuscript
 
@@ -302,7 +309,7 @@ scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
 
 ### Workflow 
 
-* Evaluation of Nextflow against Snakemake
+* Comparison of Nextflow and Snakemake (limited, in context)
 * Tagged containers for 
   * each release of the pipeline
   * submitted/revised/final publication
@@ -319,7 +326,12 @@ scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
 
 ----
 
-## The good
+[![Flowchart](doc/flowchart_small.png)](doc/flowchart.png)
+
+
+----
+
+## (Some of) the good
 
 * [https://gitlab.com/makhlaghi/reproducible-paper](https://gitlab.com/makhlaghi/reproducible-paper) (`make` and `LaTeX`)
 * [https://github.com/Robinlovelace/rmarkdown-paper-repo](https://github.com/Robinlovelace/rmarkdown-paper-repo)
