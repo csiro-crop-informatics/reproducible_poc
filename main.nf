@@ -86,7 +86,7 @@ process fasta2mockFASTQ {
     set val(longtag),val(nametag),file(r1),file(r2) from fa2fqreads
 
   output:
-    set val(nametag), file ("*.q1.gz"), file("*.q2.gz") into FASTQ
+    set val(longtag), val(nametag), file ("*.q1.gz"), file("*.q2.gz") into FASTQ
 
     """
     zcat ${r1} | fasta2fastqDummy.sh | pigz --fast --stdout > "${nametag}.q1.gz"
@@ -95,9 +95,9 @@ process fasta2mockFASTQ {
 }
 
 process fastQC {
-  tag {nametag}
+  tag {longtag}
   input:
-    set val(nametag), file("${nametag}.q1.gz"), file("${nametag}.q2.gz") from FASTQ
+    set val(longtag), val(nametag), file("${nametag}.q1.gz"), file("${nametag}.q2.gz") from FASTQ
 
   output:
     file "*_fastqc.{zip,html}" into fastqc_results
