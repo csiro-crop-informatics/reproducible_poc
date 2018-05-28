@@ -5,10 +5,7 @@ nrepeat = params.nrepeat
 //INPUT GENOME PARAMS
 url = params.url
 name = params.name
-writeup = file(params.writeup)
 docheader = file(params.docheader)
-
-//TODO add (conditional?) simulation of transcript reads using a feature file biokanga simreads --featfile 
 
 def helpMessage() {
     log.info"""
@@ -27,7 +24,6 @@ def helpMessage() {
     name        : ${params.name}
     outdir      : ${params.outdir}
     publishmode : ${params.publishmode} use copy or move if working across filesystems
-    template    : ${params.writeup}
     """.stripIndent()
 }
 
@@ -66,7 +62,6 @@ process kangaSimReads {
 
   script:
     nametag = name+"_"+nreads+"_"+seqerr+"_"+rep
-//    longtag = "name="+name+" nreads="+nreads+" rep="+rep
     longtag = ["name":name, "nreads":nreads, "seqerr":seqerr, "rep":rep]
     """
     biokanga simreads \
@@ -181,7 +176,7 @@ process kangaAlign {
 
   script:
     tag = name+"_vs_"+dbname+".biokanga"
-    longtag = longtag0.clone() //deepCopy(longtag0) //otherwise moidfying orginal map, triggering re-runs with -resume
+    longtag = longtag0.clone() //otherwise modifying orginal map, triggering re-runs with -resume
     longtag.ref = dbname
     longtag.aligner = "BioKanga"
     """
@@ -197,7 +192,6 @@ process kangaAlign {
 
 process extractStatsFromBAMs {
   tag {longtag}
-//  cache 'deep'
   input: 
     set val(longtag), val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
 
@@ -214,7 +208,6 @@ process extractStatsFromBAMs {
 }
 
 process combineStats {
-
   input:
     file("statsFile*") from statsFiles.collect()
     val longtag from longtags.first()
@@ -223,7 +216,6 @@ process combineStats {
     file allStats into allStatsForFigs, allStatsForDoc
     
   script:
-//  allStats = file('allStats')
   statsHeader = longtag.keySet().join("\t")+"\t"+"Matches\tAlignments\tMatchRate"
     """
       cat <(echo -e "${statsHeader}") statsFile* >> allStats
@@ -231,7 +223,6 @@ process combineStats {
 }
 
 process MOCK_generateFigures {
-//  tag {nametag}
   label "MOCK_PROCESS"
   input:
     file allStats from allStatsForFigs
@@ -254,7 +245,6 @@ process MOCK_generateFigures {
 }
 
 process MOCK_generateReportMatter {
-//  tag {tag}
   label "MOCK_PROCESS"
   input:
     file "*figure" from figures.collect()
