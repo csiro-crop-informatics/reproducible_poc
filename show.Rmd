@@ -104,7 +104,7 @@ sessionInfo()
 
   * evaluation of BioKanga's sequence alignment module vs state-of-the-art tools
   * turn-key reproducibility
-  * reusability
+  * re-usability
 
 <div class="column-right">
 ![](https://openclipart.org/download/192541/pushthebutton.svg){width=33%}
@@ -119,12 +119,12 @@ sessionInfo()
 * open source and version control from day 1
   * [https://github.com/csiro-crop-informatics/reproducible_poc](https://github.com/csiro-crop-informatics/reproducible_poc)
 * focus on design (not immediate result)
-* workflow managment
+* workflow management
 * containers
 
 ### Planned
 
-  * CI
+  * CO
   * automated builds 
 
 ----
@@ -246,14 +246,14 @@ cat conf/containers.config
   * LaTeX
   * *LaTeX Beamer slides*
 * MS Word, ODT, RTF 
-* Markdown, and Github flavored Markdown documents
+* Markdown, and Github flavoured Markdown documents
 
 ----
 
 ## [These slides](https://github.com/csiro-crop-informatics/reproducible_poc/blob/develop/show.Rmd)
 
 * Dependencies
-  * R, Pandoc, `rmarkdown`, `revealjs`
+  * R, Pandoc, `rmarkdown`, `revealjs`, `kableExtra`
 * Use R, RStudio or a simple `RScript` from the command line
 
 
@@ -274,7 +274,7 @@ cat render.R
   * ~~Doc rendering to execute pipeline~~
   * Run pipeline, then render doc
 * ### Detail 
-  * results of tested tools are compared to ground-trouth (original locations of simulated reads)
+  * results of tested tools are compared to ground truth (original locations of simulated reads)
 * ### Workflow introspection 
   * Nextflow offers detailed execution [reports](https://rsuchecki.github.io/reproducible.github.io/report.html) and [timelines](https://rsuchecki.github.io/reproducible.github.io/timeline.html), which could be incorporated or linked to in the generated report/manuscript
 
@@ -296,7 +296,7 @@ scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
 ### Document generation refinement 
 
 * R Markdown rendering not as flexible as hoped
-* Generation of ouptut in different formats somewhat limited, for more complex content where pure (R)Markdown is insuffcient have to decide on either 
+* Generation of output in different formats somewhat limited, for more complex content where pure (R)Markdown is insufficient have to decide on either 
   * (R)Markdown with LaTeX 
   * (R)Markdown with HTML
 
@@ -319,7 +319,14 @@ scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
 
 ----
 
-## :-(
+## The good
+
+* [https://gitlab.com/makhlaghi/reproducible-paper](https://gitlab.com/makhlaghi/reproducible-paper) (`make` and `LaTeX`)
+* [https://github.com/Robinlovelace/rmarkdown-paper-repo](https://github.com/Robinlovelace/rmarkdown-paper-repo)
+* [https://github.com/libscie/rmarkdown-workshop](https://github.com/libscie/rmarkdown-workshop)
+* [https://andrewgoldstone.com/blog/2015/05/27/rmd-slides/](https://andrewgoldstone.com/blog/2015/05/27/rmd-slides/)
+
+## The bad & the ugly
 
 <div class="column-left">
 
@@ -328,19 +335,18 @@ scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
 
 </div>
 
-<div class="column-right">
+<div class="column-farright">
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">The &quot;Journal of Irreproducible Results&quot; was a joke, but actually that&#39;s what most journals really are. <a href="http://t.co/TiLh2f5JZH">http://t.co/TiLh2f5JZH</a></p>&mdash; Sean Carroll (@seanmcarroll) <a href="https://twitter.com/seanmcarroll/status/424596260893364225?ref_src=twsrc%5Etfw">January 18, 2014</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 </div>
 
-## Interesting work out there
-
-* [https://gitlab.com/makhlaghi/reproducible-paper](https://gitlab.com/makhlaghi/reproducible-paper)
-  * `make` and `LaTeX`
 
 
+
+
+<!--Credit: https://markdownmonster.west-wind.com/docs/_4sf0may9m.htm#markdown-code-output-->
 <!--<link href="scripts/highlightjs/styles/github-gist.css" rel="stylesheet" />-->
 <!--<script src="scripts/highlightjs/highlight.pack.js"></script>-->
 
@@ -357,6 +363,5 @@ function highlightCode() {
 highlightCode();
 </script>
 
-----
 
 
