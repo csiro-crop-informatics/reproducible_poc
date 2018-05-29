@@ -173,7 +173,7 @@ dot -Tpng -odoc/flowchart.png doc/flowchart.dot
 dot -Tpng -Gsize=9,7\! -Gdpi=100 -odoc/flowchart_small.png doc/flowchart.dot
 ```
 
-[![Flowchart](doc/flowchart_small.png)](doc/flowchart.png)
+[![Flowchart](doc/flowchart_small.png)](https://raw.githubusercontent.com/rsuchecki/reproducible.github.io/master/doc/flowchart.png)
 
 ----
 
