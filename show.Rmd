@@ -255,7 +255,7 @@ cat conf/containers.config
 
 ## [These slides](https://github.com/csiro-crop-informatics/reproducible_poc/blob/develop/show.Rmd)
 
-* Source: [show.Rmd](show.Rmd)
+* Source: [show.Rmd](https://github.com/csiro-crop-informatics/reproducible_poc/blob/develop/show.Rmd)
 * Tools and packages:
   * R, Pandoc, `rmarkdown`, `revealjs`, `kableExtra`
 * Use R, RStudio or a simple `RScript` to render from the command line
