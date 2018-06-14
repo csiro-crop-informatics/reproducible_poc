@@ -1,10 +1,14 @@
 //READ SIMULATION PARAMS
 seqerrs = params.seqerrs.toString().tokenize(",")
-nreadsarr = params.nreads.toString().tokenize(",")
+nsimreadsarr = params.nsimreads.toString().tokenize(",")*.toInteger()
 nrepeat = params.nrepeat
 //INPUT GENOME PARAMS
 url = params.url
 name = params.name
+//INPUT READS PARAMS
+reads1url = params.realreads1
+reads2url = params.realreads2
+
 docheader = file(params.docheader)
 
 def helpMessage() {
@@ -18,7 +22,7 @@ def helpMessage() {
 
     Default params:
     seqerrs     : ${params.seqerrs}
-    nreads      : ${params.nreads} - this can be a comma-delimited set e.g. 100,20000,400
+    nsimreads   : ${params.nsimreads} - this can be a comma-delimited list e.g. 100,20000,400
     nrepeat     : ${params.nrepeat} 
     url         : ${params.url}
     name        : ${params.name}
@@ -34,6 +38,14 @@ if (params.help){
     exit 0
 }
 
+/*
+ * Create a channel for (local) input read files
+ */
+Channel
+    .fromFilePairs( params.reads, size: 2 )
+    .ifEmpty { exit 1, "Cannot find reads matching: ${params.reads}\nNB: Path must contain at least one * wildcard and be enclosed in quotes." }
+    .set { local_read_files }
+
 process fetchRef {
   tag {name}
   input:
@@ -45,33 +57,57 @@ process fetchRef {
 
   script:
     """
-    curl ${url} | gunzip --stdout > ref
+    curl ${url} | gunzip --stdout | head -100000 > ref
     """
 }
 
+
+process fetchReads {
+
+  input: 
+    val reads1url
+    val reads2url
+
+  output:
+    set val(longtag), val(nametag),file("r1.gz"), file("r2.gz") into FASTQ, hisat2FASTQ, kangaFASTQ
+
+  script:
+    nametag = "tmpTAG"
+    longtag = ["name":"real", "nreads":"10k", "seqerr":"unk", "rep":"na", "format":"fq"]
+    """
+    curl ${reads1url} | gunzip --stdout | head -n 40000 | pigz --fast > r1.gz
+    curl ${reads2url} | gunzip --stdout | head -n 40000 | pigz --fast > r2.gz
+    """
+
+}
+
 process kangaSimReads {
+
   tag {longtag}
   input:
     set val(name), file(ref) from simReadsRefs
-    each nreads from nreadsarr
+    each nsimreads from nsimreadsarr
     each seqerr from seqerrs
     each rep from 1..nrepeat
 
   output:
     set val(longtag), val(nametag),file("r1.gz"),file("r2.gz") into kangaReads, hisat2reads, fa2fqreads //simReads
 
+  when:
+    nsimreads > 0 
+  
   script:
-    nametag = name+"_"+nreads+"_"+seqerr+"_"+rep
-    longtag = ["name":name, "nreads":nreads, "seqerr":seqerr, "rep":rep]
+    nametag = name+"_"+nsimreads+"_"+seqerr+"_"+rep
+    longtag = ["name":name, "nreads":nsimreads, "seqerr":seqerr, "rep":rep, "format":"fa"]
     """
-    biokanga simreads \
-    --pegen \
-    --seqerrs ${seqerr} \
-    --in ${ref} \
-    --nreads ${nreads} \
-    --out r1 \
-    --outpe r2 \
-    && pigz --fast r1 r2
+        biokanga simreads \
+        --pegen \
+        --seqerrs ${seqerr} \
+        --in ${ref} \
+        --nreads ${nsimreads} \
+        --out r1 \
+        --outpe r2 \
+        && pigz --fast r1 r2
     """
 }
 
@@ -81,7 +117,7 @@ process fasta2mockFASTQ {
     set val(longtag),val(nametag),file(r1),file(r2) from fa2fqreads
 
   output:
-    set val(longtag), val(nametag), file ("*.q1.gz"), file("*.q2.gz") into FASTQ
+    set val(longtag), val(nametag), file ("*.q1.gz"), file("*.q2.gz") into MockFASTQ
 
     """
     zcat ${r1} | fasta2fastqDummy.sh | pigz --fast --stdout > "${nametag}.q1.gz"
@@ -92,7 +128,7 @@ process fasta2mockFASTQ {
 process fastQC {
   tag {longtag}
   input:
-    set val(longtag), val(nametag), file("${nametag}.q1.gz"), file("${nametag}.q2.gz") from FASTQ
+    set val(longtag), val(nametag), file("${nametag}.q1.gz"), file("${nametag}.q2.gz") from MockFASTQ.mix(FASTQ)
 
   output:
     file "*_fastqc.{zip,html}" into fastqc_results
@@ -132,7 +168,7 @@ process hisat2Index {
 process hisat2Align {
   tag {longtag}
   input:
-    set val(longtag0), val(name), file(r1),file(r2) from hisat2reads
+    set val(longtag0), val(name), file(r1),file(r2) from hisat2reads.mix(hisat2FASTQ)
     set val(dbname), file("hisat2db.*.ht2") from hisat2dbs
 
   output:
@@ -143,8 +179,9 @@ process hisat2Align {
     longtag = longtag0.clone() //deepCopy(longtag0)
     longtag.ref = dbname
     longtag.aligner = "HISAT2"
+    format = longtag["format"]=="fq"?"-q":"-f"
     """
-    hisat2 -x hisat2db -f -1 ${r1} -2 ${r2} \
+    hisat2 -x hisat2db ${format} -1 ${r1} -2 ${r2} \
     | samtools view -bS -F 4 -F 8 -F 256 - > ${tag}.bam
     """
 }
@@ -168,7 +205,7 @@ process kangaIndex {
 process kangaAlign {
   tag {longtag}
   input:
-    set val(longtag0), val(name),file(r1),file(r2) from kangaReads
+    set val(longtag0), val(name),file(r1),file(r2) from kangaReads.mix(kangaFASTQ)
     set val(dbname),file(kangadb) from kangadbs
 
   output:
@@ -266,3 +303,15 @@ process MOCK_generateReportMatter {
 //    """
 }
 
+
+//process tagLocalReads {
+//  input: 
+//    set val(name),file(reads) from local_read_files
+//  
+//  output:
+//    set val(longtag), val(nametag),file(r1), file(r2) into FASTQlocal //, hisat2FASTQlocal, kangaFASTQlocal
+
+//  exec:
+//    nametag = name
+//    longtag = ["name":"local", "nreads":"unk", "seqerr":"unk", "rep":"na", "format":"fq"]
+//}

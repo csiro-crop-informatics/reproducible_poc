@@ -87,6 +87,24 @@ nextflow main.nf -profile singularity
 * The required containers will be pulled from [Docker Hub](https://hub.docker.com/)
   * The containers are defined per each process in [`conf/containers.config`](conf/containers.config)
 
+
+## Local/interactive using bioconda recipes/packages 
+
+NOTE! Experimental, no biokanga conda recipe available, so assuming biokanga executable is locally available.
+
+With `coda` installed, make sure required channels are available
+
+```
+conda config --add channels bioconda 
+conda config --add channels conda-forge 
+```
+
+Execute
+
+```
+nextflow main.nf -profile conda
+```
+
 ## On a SLURM cluster with modules
 
 ```
@@ -188,7 +206,7 @@ Logout from the master node and shutdown the cluster either from AWS console or 
 
 # Execution summary report, timeline and trace
 
-After execution of the pipeline `report.html` ([such as this one](https://rsuchecki.github.io/reproducible.github.io/report.html)) and `timeline.html` ([like this one](https://rsuchecki.github.io/reproducible.github.io/timeline.html)) are created under `flowinfo/`, where you will also find execution `trace.txt`.
+After execution of the pipeline `report.html` ([such as this one](https://rsuchecki.github.io/reproducible/report.html)) and `timeline.html` ([like this one](https://rsuchecki.github.io/reproducible/timeline.html)) are created under `flowinfo/`, where you will also find execution `trace.txt`.
 The timeline below illustrates the execution of the pipeline for varying number of simulated reads at 1k, 10k and 100k.
 
 ![timeline](doc/timeline.png)
