@@ -173,7 +173,7 @@ dot -Tpng -odoc/flowchart.png doc/flowchart.dot
 dot -Tpng -Gsize=9,7\! -Gdpi=100 -odoc/flowchart_small.png doc/flowchart.dot
 ```
 
-[![Flowchart](doc/flowchart_small.png)](https://raw.githubusercontent.com/rsuchecki/reproducible.github.io/master/doc/flowchart.png)
+[![Flowchart](doc/flowchart_small.png)](flowchart.png)
 
 ----
 
@@ -277,7 +277,7 @@ cat render.R
 
 * ### Design conundrum
   * ~~Pipeline to render the document~~
-  * ~~Document rendering to execute pipeline~~
+  * Document rendering to execute pipeline
   * Run pipeline, then render the document
 * ### Detail 
   * output from the tested tools evaluated against ground truth
@@ -326,7 +326,7 @@ scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
 
 ----
 
-[![Flowchart](doc/flowchart_small.png)](doc/flowchart.png)
+[![Flowchart](doc/flowchart_small.png)](flowchart.png)
 
 
 ----
@@ -340,19 +340,19 @@ scroll_box(height = "400px") #add width for horizontal scroll, can use % as well
 
 ## The bad & the ugly
 
-<div class="column-left">
+<div class="column-right">
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">4 pages of this. Images pasted into a word document! <a href="https://t.co/CkVpLutZZV">pic.twitter.com/CkVpLutZZV</a></p>&mdash; Paul Gardner (@ppgardne) <a href="https://twitter.com/ppgardne/status/1000582103141007361?ref_src=twsrc%5Etfw">May 27, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 </div>
 
-<div class="column-farright">
+<!--<div class="column-farright">-->
 
-<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">The &quot;Journal of Irreproducible Results&quot; was a joke, but actually that&#39;s what most journals really are. <a href="http://t.co/TiLh2f5JZH">http://t.co/TiLh2f5JZH</a></p>&mdash; Sean Carroll (@seanmcarroll) <a href="https://twitter.com/seanmcarroll/status/424596260893364225?ref_src=twsrc%5Etfw">January 18, 2014</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<!--<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">The &quot;Journal of Irreproducible Results&quot; was a joke, but actually that&#39;s what most journals really are. <a href="http://t.co/TiLh2f5JZH">http://t.co/TiLh2f5JZH</a></p>&mdash; Sean Carroll (@seanmcarroll) <a href="https://twitter.com/seanmcarroll/status/424596260893364225?ref_src=twsrc%5Etfw">January 18, 2014</a></blockquote>-->
+<!--<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>-->
 
-</div>
+<!--</div>-->
 
 
 
