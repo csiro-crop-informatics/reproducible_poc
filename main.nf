@@ -82,7 +82,7 @@ process fetchReads {
 }
 
 process kangaSimReads {
-
+  label 'biokanga'
   tag {longtag}
   input:
     set val(name), file(ref) from simReadsRefs
@@ -153,6 +153,7 @@ process multiQC {
 }
 
 process hisat2Index {
+  label 'hisat2'
   tag{name}
   input:
     set val(name), file(ref) from hisat2Refs
@@ -166,6 +167,8 @@ process hisat2Index {
 }
 
 process hisat2Align {
+  label 'hisat2'
+  label 'samtools'
   tag {longtag}
   input:
     set val(longtag0), val(name), file(r1),file(r2) from hisat2reads.mix(hisat2FASTQ)
@@ -187,6 +190,7 @@ process hisat2Align {
 }
 
 process kangaIndex {
+  label 'biokanga'
   tag{name}
   input:
     set val(name), file(ref) from kangaRefs
@@ -203,6 +207,7 @@ process kangaIndex {
 }
 
 process kangaAlign {
+  label 'biokanga'
   tag {longtag}
   input:
     set val(longtag0), val(name),file(r1),file(r2) from kangaReads.mix(kangaFASTQ)
@@ -228,6 +233,7 @@ process kangaAlign {
 }
 
 process extractStatsFromBAMs {
+  label 'samtools'
   tag {longtag}
   input: 
     set val(longtag), val(nametag), file("${nametag}*.bam") from kangaBAMs.mix(hisat2BAMs)
