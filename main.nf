@@ -41,10 +41,10 @@ if (params.help){
 /*
  * Create a channel for (local) input read files
  */
-Channel
-    .fromFilePairs( params.reads, size: 2 )
-    .ifEmpty { exit 1, "Cannot find reads matching: ${params.reads}\nNB: Path must contain at least one * wildcard and be enclosed in quotes." }
-    .set { local_read_files }
+//Channel
+//    .fromFilePairs( params.reads, size: 2 )
+//    .ifEmpty { exit 1, "Cannot find reads matching: ${params.reads}\nNB: Path must contain at least one * wildcard and be enclosed in quotes." }
+//    .set { local_read_files }
 
 process fetchRef {
   tag {name}
