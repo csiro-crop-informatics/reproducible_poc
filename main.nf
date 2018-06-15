@@ -73,7 +73,7 @@ process fetchReads {
 
   script:
     nametag = "tmpTAG"
-    longtag = ["name":"real", "nreads":"10k", "seqerr":"unk", "rep":"na", "format":"fq"]
+    longtag = ["name":"real", "nreads":"10000", "seqerr":"unk", "rep":"na", "format":"fq"]
     """
     curl ${reads1url} | gunzip --stdout | head -n 40000 | pigz --fast > r1.gz
     curl ${reads2url} | gunzip --stdout | head -n 40000 | pigz --fast > r2.gz
@@ -288,7 +288,6 @@ process MOCK_generateFigures {
 }
 
 process MOCK_generateReportMatter {
-  label "MOCK_PROCESS"
   input:
     file "*figure" from figures.collect()
     file allStats from allStatsForDoc
