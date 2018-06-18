@@ -299,7 +299,7 @@ process MOCK_generateReportMatter {
 
   script:
     """
-    
+    echo
     """
 //    echo "---" > "${writeup}"
 //    cat "${docheader}" >> "${writeup}"

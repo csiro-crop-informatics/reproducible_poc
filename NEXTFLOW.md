@@ -215,4 +215,4 @@ The timeline below illustrates the execution of the pipeline for varying number 
 
 A digraph representation of the pipeline can be produced by nextflow. This can be HTML (`-with-dag flowchart.html`), a [DOT language](https://www.graphviz.org/doc/info/lang.html) file or a figure (pdf, png, svg) generated from DOT if Graphviz is available e.g. `-with-dag flowchart.svg`
 
-![flowchart](doc/flowchart.svg)
+![flowchart](doc/flowchart.png)
