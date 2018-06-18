@@ -153,7 +153,6 @@ process multiQC {
 }
 
 process hisat2Index {
-  label 'hisat2'
   tag{name}
   input:
     set val(name), file(ref) from hisat2Refs
@@ -167,8 +166,6 @@ process hisat2Index {
 }
 
 process hisat2Align {
-  label 'hisat2'
-  label 'samtools'
   tag {longtag}
   input:
     set val(longtag0), val(name), file(r1),file(r2) from hisat2reads.mix(hisat2FASTQ)
