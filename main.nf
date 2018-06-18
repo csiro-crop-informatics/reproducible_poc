@@ -22,12 +22,12 @@ def helpMessage() {
 
     Default params:
     seqerrs     : ${params.seqerrs}
-    nsimreads   : ${params.nsimreads} - this can be a comma-delimited list e.g. 100,20000,400
+    nsimreads   : ${params.nsimreads} [this can be a comma-delimited list e.g. 100,20000,400]
     nrepeat     : ${params.nrepeat} 
     url         : ${params.url}
     name        : ${params.name}
     outdir      : ${params.outdir}
-    publishmode : ${params.publishmode} use copy or move if working across filesystems
+    publishmode : ${params.publishmode} [use 'copy' or 'move' if working across filesystems]
     """.stripIndent()
 }
 
@@ -153,6 +153,7 @@ process multiQC {
 }
 
 process hisat2Index {
+  label 'hisat2'
   tag{name}
   input:
     set val(name), file(ref) from hisat2Refs
@@ -166,6 +167,7 @@ process hisat2Index {
 }
 
 process hisat2Align {
+  label 'hisat2'
   tag {longtag}
   input:
     set val(longtag0), val(name), file(r1),file(r2) from hisat2reads.mix(hisat2FASTQ)
