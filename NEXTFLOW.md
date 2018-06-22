@@ -142,7 +142,7 @@ nextflow main.nf -profile slurm,singularity,singularitymodule
   * Run `aws config`
   * Set AWS access ID to the one generated in your AWS account console
   * Set AWS access key to the one generated in your AWS account console
-  * Set default region to `eu-west-1` (Ireland) where a pre-configured nextflow AMI (`ami-4b7daa32`) is available. We use `ap-southeast-2` (Sydney) instead, but this required cloning the AMI to make it available in this region. The cloned AMI is `ami-054c4e0bad8549c37`.
+  * Set default region to `eu-west-1` (Ireland) where a pre-configured nextflow AMI (`ami-4b7daa32`) is available. We use `ap-southeast-2` (Sydney) instead, but this required cloning the AMI to make it available in this region. The cloned AMI is ~~`ami-054c4e0bad8549c37`~~. The cloneed AMI is no longer available, if you want to use region other than `eu-west-1` make another clone of `ami-4b7daa32` and update your configuration to point to the cloned AMI.
 * Create EFS volume, record details for `cloud` settings in [`nextflow.config`](nextflow.config). The settings need to be specific to your account, but should follow this pattern
 
 ```
